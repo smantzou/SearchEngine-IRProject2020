@@ -18,10 +18,5 @@ def get_sub_domain_name(url):
     except:
         return ''
 
-def foo():
-    i=0
-    j=0
-    i++
-    j++
-    pass
+
 
