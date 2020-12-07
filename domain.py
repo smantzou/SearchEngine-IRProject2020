@@ -18,4 +18,6 @@ def get_sub_domain_name(url):
     except:
         return ''
 
+def foo():
+    pass
 
