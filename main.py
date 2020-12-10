@@ -1,5 +1,6 @@
 import threading
 from queue import Queue
+import queue
 from spider import Spider
 from domain import *
 from general import *
@@ -10,7 +11,7 @@ import time
 
 #  create a worker set(will die with main)
 def create_workers():
-    for _ in range(NUMBER_OF_THREADS):
+    for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=pre_work)
         t.daemon = True
         t.start()
@@ -18,17 +19,19 @@ def create_workers():
 
 def pre_work():
     work()
-    time.sleep(3)
+    time.sleep(5)
     os._exit(0)
-
-
 # do the next job in the queue
 
 def work(i=0):
     while i < jobs_per_thread:
-        url = queue.get()
+        if i ==jobs_per_thread/2:
+          url = fifo_queue.get()
+        else: url =lifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
-        queue.task_done()
+        if i == jobs_per_thread / 2:
+            fifo_queue.task_done()
+        else: lifo_queue.task_done()
         i += 1
 
 
@@ -37,8 +40,10 @@ def work(i=0):
 
 def create_jobs():
     for link in file_to_set(QUEUE_FILE):
-        queue.put(link)
-    queue.join()
+          fifo_queue.put(link)
+          lifo_queue.put(link)
+    fifo_queue.join()
+    lifo_queue.join()
     crawl()
 
 
@@ -58,9 +63,11 @@ if __name__ == '__main__':
     CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
     NUMBER_OF_THREADS = int(sys.argv[4])
     MAX_NUMBER_OF_CRAWLS = int(sys.argv[2])
-    keep_old_files = bool(sys.argv[3])
+    keep_old_files = bool(int(sys.argv[3]))
     jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
-    queue = Queue()
+    lifo_queue = queue.LifoQueue()
+    fifo_queue=Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
     crawl()
+

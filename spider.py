@@ -2,9 +2,9 @@ from urllib.request import urlopen
 from link_finder import LinkFinder
 from general import *
 
-
 class Spider:
     # Class variable (shared among all instances)
+
     project_name = ''
     base_url = ''
     domain_name = ''
@@ -12,6 +12,7 @@ class Spider:
     crawled_file = ''
     queue = set()
     crawled = set()
+    not_go_thear=''
 
     def __init__(self, project_name, base_url, domain_name):
         Spider.project_name = project_name
@@ -21,6 +22,7 @@ class Spider:
         Spider.crawled_file = Spider.project_name + '/crawled.txt'
         self.boot()
         self.crawl_page('First Spider', Spider.base_url)
+        Spider.not_go_thear='facebook'
 
     @staticmethod
     def boot():
@@ -48,7 +50,7 @@ class Spider:
             if response.getheader('Content-Type').split(';')[0] == 'text/html':
                 html_bytes = response.read()
                 html_string = html_bytes.decode("utf-8")
-            finder = LinkFinder(Spider.base_url, page_url)
+            finder = LinkFinder(Spider.base_url, page_url)# edooo
             finder.handle_starttag(html_string)
         except:
             print('Error : can not crawled page '+page_url)
@@ -63,8 +65,11 @@ class Spider:
                 continue
             if url in Spider.crawled:
                 continue
-            if Spider.domain_name not in url:
-                continue
+            # if url.contains(Spider.not_go_thear):
+            #     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+            #     continue
+            # if Spider.domain_name not in url:
+            #     continue
             Spider.queue.add(url)
 
     @staticmethod

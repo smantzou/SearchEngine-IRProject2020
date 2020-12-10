@@ -3,6 +3,7 @@ from urllib import parse
 
 
 class LinkFinder:
+# here must be changes
 
     def __init__(self, base_url, page_url):
         self.base_url = base_url
