@@ -21,27 +21,30 @@ def pre_work():
     work()
     time.sleep(5)
     os._exit(0)
+
+
 # do the next job in the queue
 
 def work(i=0):
     while i < jobs_per_thread:
-        if i ==jobs_per_thread/2:
-          url = fifo_queue.get()
-        else: url =lifo_queue.get()
+        if i < jobs_per_thread / 2:
+            url = fifo_queue.get()
+        else:
+            url = lifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
-        if i == jobs_per_thread / 2:
+        if i < jobs_per_thread / 2:
             fifo_queue.task_done()
-        else: lifo_queue.task_done()
+        else:
+            lifo_queue.task_done()
         i += 1
 
-
-    # each queued link is a new job
+# each queued link is a new job
 
 
 def create_jobs():
     for link in file_to_set(QUEUE_FILE):
-          fifo_queue.put(link)
-          lifo_queue.put(link)
+        fifo_queue.put(link)
+        lifo_queue.put(link)
     fifo_queue.join()
     lifo_queue.join()
     crawl()
@@ -56,18 +59,20 @@ def crawl():
 
 
 if __name__ == '__main__':
-    PROJECT_NAME = 'stackoverflow'
+    PROJECT_NAME = 'Crawler'
     HOMEPAGE = sys.argv[1]
     DOMAIN_NAME = get_domain_name(HOMEPAGE)
     QUEUE_FILE = PROJECT_NAME + '/queue.txt'
     CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
+    DICT_FILE = PROJECT_NAME + '/dictionary.pkl'
     NUMBER_OF_THREADS = int(sys.argv[4])
     MAX_NUMBER_OF_CRAWLS = int(sys.argv[2])
     keep_old_files = bool(int(sys.argv[3]))
+    if keep_old_files is False:
+        delete_data_files(PROJECT_NAME)
     jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
     lifo_queue = queue.LifoQueue()
-    fifo_queue=Queue()
+    fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
     crawl()
-

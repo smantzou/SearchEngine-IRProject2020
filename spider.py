@@ -1,6 +1,9 @@
 from urllib.request import urlopen
+from urllib import parse
+from textItem import *
 from link_finder import LinkFinder
 from general import *
+
 
 class Spider:
     # Class variable (shared among all instances)
@@ -10,9 +13,11 @@ class Spider:
     domain_name = ''
     queue_file = ''
     crawled_file = ''
+    dict_file = ''
     queue = set()
     crawled = set()
-    not_go_thear=''
+    textDict = dict()
+    dictCount = 0
 
     def __init__(self, project_name, base_url, domain_name):
         Spider.project_name = project_name
@@ -20,9 +25,11 @@ class Spider:
         Spider.domain_name = domain_name
         Spider.queue_file = Spider.project_name + '/queue.txt'
         Spider.crawled_file = Spider.project_name + '/crawled.txt'
+        Spider.dict_file = Spider.project_name + '/dictionary.pkl'
         self.boot()
+        Spider.textDict = file_to_dict(Spider.dict_file)
+        Spider.dictCount = Spider.textDict.__len__()
         self.crawl_page('First Spider', Spider.base_url)
-        Spider.not_go_thear='facebook'
 
     @staticmethod
     def boot():
@@ -50,10 +57,14 @@ class Spider:
             if response.getheader('Content-Type').split(';')[0] == 'text/html':
                 html_bytes = response.read()
                 html_string = html_bytes.decode("utf-8")
-            finder = LinkFinder(Spider.base_url, page_url)# edooo
+            finder = LinkFinder(Spider.base_url, page_url)
             finder.handle_starttag(html_string)
-        except:
-            print('Error : can not crawled page '+page_url)
+            aTextItem = textItem(parse.urljoin(Spider.base_url, page_url), finder.return_url_text(html_string))
+            Spider.textDict.update({Spider.dictCount: aTextItem})
+            Spider.dictCount += 1
+        except Exception as ex:
+            print(ex)
+            print('Error : can not crawled page ' + parse.urljoin(Spider.base_url, page_url))
             return set()
 
         return finder.page_links()
@@ -65,14 +76,10 @@ class Spider:
                 continue
             if url in Spider.crawled:
                 continue
-            # if url.contains(Spider.not_go_thear):
-            #     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            #     continue
-            # if Spider.domain_name not in url:
-            #     continue
             Spider.queue.add(url)
 
     @staticmethod
     def update_files():
         set_to_file(Spider.queue, Spider.queue_file)
         set_to_file(Spider.crawled, Spider.crawled_file)
+        dict_to_file(Spider.textDict, Spider.dict_file)
