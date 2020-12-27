@@ -5,7 +5,6 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from num2words import num2words
 
-word_dict = dict()
 url_dict = dict()
 
 
@@ -36,11 +35,12 @@ def stemDictionary():
         string_text = string_text.strip()
         makeUrlDict(url, stemSentence(string_text))
 
-    crawldict.clear()
-    dict_to_file(crawldict, 'Crawler/dictionary.pkl')
+    # crawldict.clear()
+    # dict_to_file(crawldict, 'Crawler/dictionary.pkl')
 
 
 def makeUrlDict(url, stemmedTokens):
+    word_dict = dict()
     for stemmedToken in stemmedTokens:
         if stemmedToken not in word_dict.keys():
             word_dict.update({stemmedToken: 1})
@@ -49,8 +49,10 @@ def makeUrlDict(url, stemmedTokens):
             word_dict.pop(stemmedToken)
             num_of_app += 1
             word_dict.update({stemmedToken: num_of_app})
-    url_dict.update({url: word_dict})
-    word_dict.clear()
+
+    url_dict.update({url: {}})
+    v = word_dict
+    url_dict[url] = v
 
 
 def return_UrlDict():
