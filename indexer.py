@@ -1,20 +1,75 @@
-index_dict = dict()
+from stemmer import stemDictionary, return_UrlDict
+from general import *
+
 url_dict = dict()
+index_dict = dict()
 
 
-def updateIndexDict(url):
-    pass
+def initIndexProcess():
+    stemDictionary()
+    url_dict = return_UrlDict()
+    # index_dict = file_to_dict('Index/tempIndex.pkl')
+    updateIndex(url_dict)
 
 
-def makeUrlDict(url, stemmedTokens):
-    for stemmedToken in stemmedTokens:
-        if stemmedToken not in url_dict.keys():
-            url_dict.update({stemmedToken:1})
-        else:
-            num_of_app = url_dict.get(stemmedToken)
-            url_dict.pop(stemmedToken)
-            num_of_app += 1
-            url_dict.update({stemmedToken:num_of_app})
+def updateIndex(url_dict):
+    for urlkey in url_dict.keys():
+        for wordkey in url_dict.get(urlkey).keys():
+            if wordkey in index_dict.keys():
+                if urlkey in index_dict.get(wordkey).keys():
+                    if index_dict.get(wordkey).get(urlkey) == url_dict.get(urlkey).get(wordkey):
+                        continue
+                    else:
+                        index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})
+                else:
+                    index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})
+            else:
+                index_dict.update(
+                    {wordkey, index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})})
 
-    print(url_dict)
-    updateIndexDict(url)
+    printIndex()
+
+
+def printIndex():
+    for key in index_dict:
+        print(key + '-->' + str(index_dict.get(key)))
+
+
+initIndexProcess()from stemmer import stemDictionary, return_UrlDict
+from general import *
+
+url_dict = dict()
+index_dict = dict()
+
+
+def initIndexProcess():
+    stemDictionary()
+    url_dict = return_UrlDict()
+    # index_dict = file_to_dict('Index/tempIndex.pkl')
+    updateIndex(url_dict)
+
+
+def updateIndex(url_dict):
+    for urlkey in url_dict.keys():
+        for wordkey in url_dict.get(urlkey).keys():
+            if wordkey in index_dict.keys():
+                if urlkey in index_dict.get(wordkey).keys():
+                    if index_dict.get(wordkey).get(urlkey) == url_dict.get(urlkey).get(wordkey):
+                        continue
+                    else:
+                        index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})
+                else:
+                    index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})
+            else:
+                index_dict.update(
+                    {wordkey, index_dict.get(wordkey).update({urlkey, url_dict.get(urlkey).get(wordkey)})})
+
+    printIndex()
+
+
+def printIndex():
+    for key in index_dict:
+        print(key + '-->' + str(index_dict.get(key)))
+
+
+initIndexProcess()
