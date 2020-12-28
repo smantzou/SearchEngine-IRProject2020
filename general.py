@@ -80,7 +80,7 @@ def dict_to_file(textDict, file):
 
 
 def file_to_dict(file):
-    if os.path.getsize(file) > 0 :
+    if os.path.getsize(file) > 0:
         with open(file, 'rb') as file:
             new_dict = pickle.load(file)
             file.close()

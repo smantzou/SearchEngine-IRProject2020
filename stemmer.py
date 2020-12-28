@@ -4,6 +4,7 @@ from general import *
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from num2words import num2words
+import os
 
 url_dict = dict()
 
@@ -26,6 +27,9 @@ def stemSentence(sentence):
 
 def stemDictionary():
     crawldict = file_to_dict('Crawler/dictionary.pkl')
+    if crawldict.__len__() == 0:
+        print("Crawled Dictionary is empty...All crawled pages have been indexed ,please crawl some pages first! ")
+        os._exit(0)
     for i in range(crawldict.__len__()):
         text = crawldict[i].return_list()
         url = crawldict[i].return_url()
@@ -35,8 +39,8 @@ def stemDictionary():
         string_text = string_text.strip()
         makeUrlDict(url, stemSentence(string_text))
 
-    # crawldict.clear()
-    # dict_to_file(crawldict, 'Crawler/dictionary.pkl')
+    crawldict.clear()
+    dict_to_file(crawldict, 'Crawler/dictionary.pkl')
 
 
 def makeUrlDict(url, stemmedTokens):
