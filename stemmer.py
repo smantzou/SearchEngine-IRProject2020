@@ -25,22 +25,22 @@ def stemSentence(sentence):
     return stem_sentence
 
 
-def stemDictionary():
-    crawldict = file_to_dict('Crawler/dictionary.pkl')
-    if crawldict.__len__() == 0:
+def stemDictionary(numberOfIndexes):
+    crawlDict = file_to_dict('Crawler/dictionary.pkl')
+    if crawlDict.__len__() == 0:
         print("Crawled Dictionary is empty...All crawled pages have been indexed ,please crawl some pages first! ")
         os._exit(0)
-    for i in range(crawldict.__len__()):
-        text = crawldict[i].return_list()
-        url = crawldict[i].return_url()
+    for i in range(1, int(numberOfIndexes)):
+        text = crawlDict[i].return_list()
+        url = crawlDict[i].return_url()
+        crawlDict.pop(i)
         string_text = ' '.join(text)
         string_text = string_text.lower()
         string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
         string_text = string_text.strip()
         makeUrlDict(url, stemSentence(string_text))
 
-    crawldict.clear()
-    dict_to_file(crawldict, 'Crawler/dictionary.pkl')
+    dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
 
 
 def makeUrlDict(url, stemmedTokens):

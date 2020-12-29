@@ -1,11 +1,10 @@
 from stemmer import stemDictionary, return_UrlDict
 from general import *
 
-index_dict = file_to_dict('Index/tempIndex.pkl')
 
 
 # na thn kaloyme apo eksw
-# na ftiaksoyme mia methodo poy tha fortwnei to tempindex
+# na ftiaksoyme mia methodo poy tha fortwnei to tempindex D
 # mia methodo poy tha kanei index mexri oso ths poyme
 # mia methodo poy tha kaleitai otan exoyme ftasei ena sygkekrimeno arithmo megethoys sto temp index
 # mia methodo poy tha kanei update ton megalo index
@@ -13,16 +12,19 @@ index_dict = file_to_dict('Index/tempIndex.pkl')
 # na mhn mpainei o crawler se oti rossoblyat selida briskei aka ban DOMAINS
 # ean den mporei na mpei sthn prwth selida poy toy dinetai na pairnei mia allh
 # ena main script san toy crawler gia na diaxeirizetai ton indexer kai na dexetai kai orismata
-def initIndexProcess():
-    stemDictionary()
-    url_dict = return_UrlDict()
-    startIndex(url_dict, 'Index/tempIndex.pkl')
-    # else:
-    #     print('Updating...')
-    #     updateIndex(url_dict, 'Index/tempIndex.pkl')
+
+def initIndexProcess(tempUpdate, generalUpdate, numberOfIndexes):
+    if tempUpdate:
+        stemDictionary(numberOfIndexes)
+        url_dict = return_UrlDict()
+        global index_dict
+        index_dict = loadIndexFileToDict('Indexer/tempIndex.pkl')
+        indexDict(url_dict, 'Index/tempIndex.pkl')
+    if generalUpdate:
+        pass
 
 
-def startIndex(url_dict, file):
+def indexDict(url_dict, file):
     for urlkey in url_dict.keys():
         word_dict = url_dict.get(urlkey)
         for wordkey in word_dict.keys():
@@ -54,10 +56,11 @@ def startIndex(url_dict, file):
 #
 #     dict_to_file(index_dict, file)
 
+def loadIndexFileToDict(file):
+    index_dict = file_to_dict(file)
+    return index_dict
+
 
 def printIndex():
     for key in index_dict:
         print(key + '-->' + str(index_dict.get(key)))
-
-
-initIndexProcess()

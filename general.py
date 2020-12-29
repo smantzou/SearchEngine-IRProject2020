@@ -19,6 +19,15 @@ def write_file(path, data):
     f.close()
 
 
+def create_index_files(project):
+    tempIndex = project + 'tempIndex.pkl'
+    generalIndex = project + 'generalIndex.pkl'
+    if not os.path.isfile(tempIndex):
+        write_file(tempIndex, '')
+    if not os.path.isfile(generalIndex):
+        write_file(generalIndex, '')
+
+
 # Create queue and crawled files
 
 def create_data_files(project_name, base_url):
@@ -30,7 +39,7 @@ def create_data_files(project_name, base_url):
     if not os.path.isfile(crawled):
         write_file(crawled, '')
     if not os.path.isfile(dictionary):
-        write_file(dictionary,'')
+        write_file(dictionary, '')
 
 
 # Delete all previous entries in the crawler folder
@@ -87,4 +96,3 @@ def file_to_dict(file):
             return new_dict
     else:
         return dict()
-
