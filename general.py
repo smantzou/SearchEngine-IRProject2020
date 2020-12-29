@@ -20,8 +20,8 @@ def write_file(path, data):
 
 
 def create_index_files(project):
-    tempIndex = project + 'tempIndex.pkl'
-    generalIndex = project + 'generalIndex.pkl'
+    tempIndex = project + '/tempIndex.pkl'
+    generalIndex = project + '/generalIndex.pkl'
     if not os.path.isfile(tempIndex):
         write_file(tempIndex, '')
     if not os.path.isfile(generalIndex):

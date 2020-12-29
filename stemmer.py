@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 from num2words import num2words
 import os
 
+
 url_dict = dict()
 
 
@@ -30,16 +31,23 @@ def stemDictionary(numberOfIndexes):
     if crawlDict.__len__() == 0:
         print("Crawled Dictionary is empty...All crawled pages have been indexed ,please crawl some pages first! ")
         os._exit(0)
-    for i in range(1, int(numberOfIndexes)):
-        text = crawlDict[i].return_list()
-        url = crawlDict[i].return_url()
-        crawlDict.pop(i)
+    if int(numberOfIndexes) > crawlDict.__len__():
+        print("Requested number of indexes larger than crawled pages...Crawled Dictionary will be empty after run!")
+        numberOfIndexes = crawlDict.__len__()
+    for _ in range(0, int(numberOfIndexes)):
+        crawlDictItem = crawlDict.popitem()
+        aTextItem = crawlDictItem[1]
+        text = aTextItem.return_list()
+        url = aTextItem.return_url()
         string_text = ' '.join(text)
         string_text = string_text.lower()
         string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
         string_text = string_text.strip()
         makeUrlDict(url, stemSentence(string_text))
 
+    # if crawlDict.__len__() == 1:
+    #     dict_to_file('', 'Crawler/dictionary.pkl')
+    # else:
     dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
 
 

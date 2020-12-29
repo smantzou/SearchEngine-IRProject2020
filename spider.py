@@ -28,6 +28,7 @@ class Spider:
         Spider.dict_file = Spider.project_name + '/dictionary.pkl'
         self.boot()
         Spider.textDict = file_to_dict(Spider.dict_file)
+
         Spider.dictCount = Spider.textDict.__len__()
         self.crawl_page('First Spider', Spider.base_url)
 
@@ -62,6 +63,7 @@ class Spider:
             finder.handle_starttag(html_string)
             aTextItem = textItem(parse.urljoin(Spider.base_url, page_url), finder.return_url_text(html_string))
             Spider.textDict.update({Spider.dictCount: aTextItem})
+
             Spider.dictCount += 1
         except Exception as ex:
             print(ex)
