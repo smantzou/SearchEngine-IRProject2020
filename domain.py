@@ -1,4 +1,12 @@
 from urllib.parse import urlparse
+from tld import get_tld
+
+allowedTLDs = ['co.uk', 'us', 'org', 'ca', 'au', 'ie', 'ky', 'mp', 'ms', 'nz', 'sh', 'uk', 'com', 'org', 'net', 'int',
+               'edu', 'gov', 'mil']
+allowedSUBs = ['www', 'mail', 'remote', 'blog', 'webmail', 'server', 'ns1', 'ns2', 'smtp', 'secure', 'vpn', 'm', 'shop',
+               'ftp', 'mail2', 'test', 'portal', 'ns', 'ww1', 'host', 'support', 'dev', 'web', 'bbs', 'ww42', 'mx',
+               'email', 'cloud', '1', 'mail1', '2', 'forum', 'owa', 'www2', 'gw', 'admin', 'store', 'mx1', 'cdn', 'api',
+               'exchange', 'app', 'gov', 'en', '']
 
 
 # Get domain name (example.com)
@@ -19,4 +27,21 @@ def get_sub_domain_name(url):
         return ''
 
 
+def getLangFolder(url):
+    langfolder = url.split('/')[1]
+    if langfolder in allowedSUBs:
+        return True
+    else:
+        return False
 
+
+def isAllowed(url):
+    langfolder = getLangFolder(url)
+    url = get_tld(url, fail_silently=True, as_object=True)
+    if url.tld in allowedTLDs:
+        if not langfolder:
+            return False
+        if url.subdomain in allowedSUBs:
+            return True
+    else:
+        return False

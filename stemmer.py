@@ -6,7 +6,6 @@ from nltk.tokenize import word_tokenize
 from num2words import num2words
 import os
 
-
 url_dict = dict()
 
 
@@ -21,6 +20,9 @@ def stemSentence(sentence):
             if word.__len__() > 5:
                 continue
             word = num2words(word)
+        else:
+            if not isEnglish(word):
+                continue
 
         stem_sentence.append(porter.stem(word))
     return stem_sentence

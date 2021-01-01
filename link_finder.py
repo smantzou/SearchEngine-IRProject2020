@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from urllib import parse
+from domain import isAllowed
 
 
 class LinkFinder:
@@ -13,7 +14,8 @@ class LinkFinder:
     def handle_starttag(self, html_string):
         soup = BeautifulSoup(html_string, 'lxml')
         for a in soup.find_all('a', href=True):
-            self.links.add(parse.urljoin(self.base_url, a['href']))
+            if isAllowed(parse.urljoin(self.base_url, a['href'])):
+                self.links.add(parse.urljoin(self.base_url, a['href']))
 
     def return_url_text(self, html_string):
         soup = BeautifulSoup(html_string, 'lxml')
