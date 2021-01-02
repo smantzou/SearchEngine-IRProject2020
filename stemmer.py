@@ -47,9 +47,6 @@ def stemDictionary(numberOfIndexes):
         string_text = string_text.strip()
         makeUrlDict(url, stemSentence(string_text))
 
-    # if crawlDict.__len__() == 1:
-    #     dict_to_file('', 'Crawler/dictionary.pkl')
-    # else:
     dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
 
 

@@ -28,20 +28,29 @@ def get_sub_domain_name(url):
 
 
 def getLangFolder(url):
-    langfolder = url.split('/')[1]
-    if langfolder in allowedSUBs:
+    if url.split('/').__len__() > 1:
+        langFolder = url.split('/')[1]
+    else:
+        return True
+
+    if langFolder in allowedSUBs or langFolder is '':
         return True
     else:
         return False
 
 
 def isAllowed(url):
-    langfolder = getLangFolder(url)
-    url = get_tld(url, fail_silently=True, as_object=True)
-    if url.tld in allowedTLDs:
-        if not langfolder:
+    langFolder = getLangFolder(url)
+    try:
+        url = get_tld(url, fail_silently=True, as_object=True)
+        if url.tld in allowedTLDs:
+            if not langFolder:
+                return False
+            if url.subdomain in allowedSUBs:
+                return True
+        else:
             return False
-        if url.subdomain in allowedSUBs:
-            return True
-    else:
+    except:
         return False
+
+
