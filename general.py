@@ -3,6 +3,7 @@ import pickle
 
 # Each website you crawl is a separate project
 import shutil
+from tld import get_tld
 
 
 def create_project_dir(directory):
@@ -52,7 +53,8 @@ def delete_data_files(project_name):
 
 def append_to_file(path, data):
     with open(path, 'a', encoding="utf-8", errors="ignore") as file:
-        file.write(data + '\n')
+        file.write(data)
+        file.write("\n")
 
 
 # Delete the contents of a file
@@ -78,7 +80,10 @@ def file_to_set(file_name):
 def set_to_file(links, file):
     delete_file_contents(file)
     for link in sorted(links):
-        append_to_file(file, link)
+        res = get_tld(link, as_object=True, fail_silently=True)
+        if res is not None:
+            if res.fld is not None:
+                append_to_file(file, link)
 
 
 # Dumps the dictionary of text into file (using pickle)

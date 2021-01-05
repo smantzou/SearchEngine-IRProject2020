@@ -6,7 +6,9 @@ allowedTLDs = ['co.uk', 'us', 'org', 'ca', 'au', 'ie', 'ky', 'mp', 'ms', 'nz', '
 allowedSUBs = ['www', 'mail', 'remote', 'blog', 'webmail', 'server', 'ns1', 'ns2', 'smtp', 'secure', 'vpn', 'm', 'shop',
                'ftp', 'mail2', 'test', 'portal', 'ns', 'ww1', 'host', 'support', 'dev', 'web', 'bbs', 'ww42', 'mx',
                'email', 'cloud', '1', 'mail1', '2', 'forum', 'owa', 'www2', 'gw', 'admin', 'store', 'mx1', 'cdn', 'api',
-               'exchange', 'app', 'gov', 'en', '']
+               'exchange', 'app', 'gov', 'en', '', 'wiki']
+
+allowedFolders = ['en', '']
 
 
 # Get domain name (example.com)
@@ -27,30 +29,25 @@ def get_sub_domain_name(url):
         return ''
 
 
-def getLangFolder(url):
-    if url.split('/').__len__() > 1:
-        langFolder = url.split('/')[1]
-    else:
-        return True
-
-    if langFolder in allowedSUBs or langFolder is '':
-        return True
-    else:
-        return False
+# def getLangFolder(url):
+#     if url.split('/').__len__() > 1:
+#         langFolder = url.split('/')[1]
+#         if langFolder in allowedSUBs:
+#             return True
+#         else:
+#             return False
+#     else:
+#         return True
 
 
 def isAllowed(url):
-    langFolder = getLangFolder(url)
+    # langFolder = getLangFolder(url)
     try:
         url = get_tld(url, fail_silently=True, as_object=True)
         if url.tld in allowedTLDs:
-            if not langFolder:
-                return False
             if url.subdomain in allowedSUBs:
                 return True
         else:
             return False
     except:
         return False
-
-
