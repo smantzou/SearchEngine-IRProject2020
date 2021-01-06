@@ -7,6 +7,7 @@ from num2words import num2words
 import os
 
 url_dict = dict()
+freq_dict = dict()
 
 
 def stemSentence(sentence):
@@ -61,9 +62,17 @@ def makeUrlDict(url, stemmedTokens):
             num_of_app += 1
             word_dict.update({stemmedToken: num_of_app})
 
+    values = word_dict.values()
+    maxf = max(values)
+    freq_dict.update({url: maxf})
+
     url_dict.update({url: {}})
     v = word_dict
     url_dict[url] = v
+
+
+def return_freq():
+    return freq_dict
 
 
 def return_UrlDict():
