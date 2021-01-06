@@ -2,22 +2,12 @@ from stemmer import stemDictionary, return_UrlDict
 from general import *
 
 
-# mia methodo poy tha kaleitai otan exoyme ftasei ena sygkekrimeno arithmo megethoys sto temp index
-# mia methodo poy tha kanei update ton megalo index
-# na diorthwsoyme bugs toy stemmer
-# na mhn mpainei o crawler se oti rossoblyat selida briskei aka ban DOMAINS
-# ean den mporei na mpei sthn prwth selida poy toy dinetai na pairnei mia allh
-
-
-def initIndexProcess(tempUpdate, generalUpdate, numberOfIndexes):
-    if tempUpdate:
-        stemDictionary(numberOfIndexes)
-        url_dict = return_UrlDict()
-        global index_dict
-        index_dict = loadIndexFileToDict('Indexer/tempIndex.pkl')
-        indexDict(url_dict, 'Indexer/tempIndex.pkl')
-    if generalUpdate:
-        pass
+def initIndexProcess(numberOfIndexes):
+    stemDictionary(numberOfIndexes)
+    url_dict = return_UrlDict()
+    global index_dict
+    index_dict = loadIndexFileToDict('Indexer/invertedIndex.pkl')
+    indexDict(url_dict, 'Indexer/invertedIndex.pkl')
 
 
 def indexDict(url_dict, file):

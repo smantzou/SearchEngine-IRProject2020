@@ -21,12 +21,9 @@ def write_file(path, data):
 
 
 def create_index_files(project):
-    tempIndex = project + '/tempIndex.pkl'
-    generalIndex = project + '/generalIndex.pkl'
+    tempIndex = project + '/invertedIndex.pkl'
     if not os.path.isfile(tempIndex):
         write_file(tempIndex, '')
-    if not os.path.isfile(generalIndex):
-        write_file(generalIndex, '')
 
 
 # Create queue and crawled files

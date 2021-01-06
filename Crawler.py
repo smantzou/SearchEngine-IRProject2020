@@ -7,7 +7,8 @@ from general import *
 import sys
 import os
 import time
-
+#NA eksagoyme mono ena kommati ths queuefile etsi wste na mhn exoyme toso megala i/o
+#Na mhn diagrafete to crawled.txt gia na mporw na allaksw xwro toy web poy crawlrw
 
 #  create a worker set(will die with main)
 def create_workers():
@@ -27,15 +28,15 @@ def pre_work():
 
 def work(i=0):
     while i < jobs_per_thread:
-        # if i < jobs_per_thread / 2:
-        #     url = fifo_queue.get()
-        # else:
-        url = lifo_queue.get()
+        if i < jobs_per_thread / 2:
+            url = fifo_queue.get()
+        else:
+            url = lifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
-        # if i < jobs_per_thread / 2:
-        #     fifo_queue.task_done()
-        # else:
-        lifo_queue.task_done()
+        if i < jobs_per_thread / 2:
+            fifo_queue.task_done()
+        else:
+            lifo_queue.task_done()
         i += 1
 
 # each queued link is a new job
@@ -43,9 +44,9 @@ def work(i=0):
 
 def create_jobs():
     for link in file_to_set(QUEUE_FILE):
-        # fifo_queue.put(link)
+        fifo_queue.put(link)
         lifo_queue.put(link)
-    # fifo_queue.join()
+    fifo_queue.join()
     lifo_queue.join()
     crawl()
 
