@@ -63,8 +63,11 @@ def makeUrlDict(url, stemmedTokens):
             word_dict.update({stemmedToken: num_of_app})
 
     values = word_dict.values()
-    maxf = max(values)
-    freq_dict.update({url: maxf})
+    if values.__len__() is 0:
+        freq_dict.update({url: 0})
+    else:
+        maxf = max(values)
+        freq_dict.update({url: maxf})
 
     url_dict.update({url: {}})
     v = word_dict

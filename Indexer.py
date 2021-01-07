@@ -1,6 +1,7 @@
 from indexhandler import *
 import sys
 from general import *
+from timeit import default_timer as timer
 
 if __name__ == '__main__':
     PROJECT_NAME = 'Indexer'
@@ -11,4 +12,7 @@ if __name__ == '__main__':
     keep_old_files = sys.argv[2]
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
+    start = timer()
     initIndexProcess(MAX_NUMBER_OF_INDEXES)
+    end = timer()
+    print('Elapsed time : ' + str(end-start))
