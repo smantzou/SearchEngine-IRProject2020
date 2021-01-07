@@ -80,3 +80,26 @@ def return_freq():
 
 def return_UrlDict():
     return url_dict
+
+
+def stemQuery(query):
+    porter = PorterStemmer()
+    sentence = ' '.join(query)
+    sentence = sentence.lower()
+    sentence = sentence.translate(sentence.maketrans('', '', string.punctuation))
+    sentence = sentence.strip()
+    token_words = word_tokenize(sentence)
+    stop_words = set(stopwords.words('english'))
+    token_words = [i for i in token_words if not i in stop_words]
+    stem_sentence = []
+    for word in token_words:
+        if word.isdigit():
+            if word.__len__() > 5:
+                continue
+            word = num2words(word)
+        else:
+            if not isEnglish(word):
+                continue
+
+        stem_sentence.append(porter.stem(word))
+    return stem_sentence
