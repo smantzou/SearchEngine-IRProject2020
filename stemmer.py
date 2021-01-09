@@ -49,6 +49,8 @@ def stemDictionary(numberOfIndexes):
         makeUrlDict(url, stemSentence(string_text))
 
     dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
+
+
 def stemQuery():
     text = aTextItem.return_list()
     url = aTextItem.return_url()
@@ -57,6 +59,7 @@ def stemQuery():
     string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
     string_text = string_text.strip()
     makeUrlDict(url, stemSentence(string_text))
+
 
 def makeUrlDict(url, stemmedTokens):
     word_dict = dict()
