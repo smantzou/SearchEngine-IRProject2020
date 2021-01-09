@@ -49,7 +49,14 @@ def stemDictionary(numberOfIndexes):
         makeUrlDict(url, stemSentence(string_text))
 
     dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
-
+def stemQuery():
+    text = aTextItem.return_list()
+    url = aTextItem.return_url()
+    string_text = ' '.join(text)
+    string_text = string_text.lower()
+    string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
+    string_text = string_text.strip()
+    makeUrlDict(url, stemSentence(string_text))
 
 def makeUrlDict(url, stemmedTokens):
     word_dict = dict()
@@ -63,7 +70,7 @@ def makeUrlDict(url, stemmedTokens):
             word_dict.update({stemmedToken: num_of_app})
 
     values = word_dict.values()
-    if values.__len__() is 0:
+    if values.__len__() == 0:
         freq_dict.update({url: 0})
     else:
         maxf = max(values)
