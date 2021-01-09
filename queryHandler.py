@@ -56,14 +56,23 @@ def Query_TF_IDF(query):
     mafTF = max(freq)
     for i in range(0, len(query)):
         tf = freq[i] / mafTF
-
         ni = len(relDoc.get(query[i]).keys())
-
         idf = math.log(N / ni, 10)
-        print(idf)
-        aTuple = {query[i]: tf*idf}
+        aTuple = (query[i], tf * idf)
         tfIdfList.append(aTuple)
     return tfIdfList
+
+
+def returnTopKResults(query_TFIDF, docu_TFIDF):
+    cosineSimilarityDict = dict()
+    query_Tuple = tuple(v for v in query_TFIDF.values())
+    for url in docu_TFIDF.keys():
+        docu_Tuple = tuple(0 for _ in query_TFIDF)
+        for word in docu_TFIDF.get(url).keys():
+            if word not in query_TFIDF.keys():
+                #calcute cosine similarity for the given tuple then insert to dict with urls as keys then sort for values then return the top k
+
+    return 0
 
 
 def processQuery(query):
@@ -71,7 +80,9 @@ def processQuery(query):
     global freq_dict
     index_dict = file_to_dict('Indexer/invertedIndex.pkl')
     freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
-    calculateTF_IDF(stemQuery(query))
-    dict = calculateTF_IDF(query)
+    docu_TFIDF = calculateTF_IDF(stemQuery(query))
     query_TFIDF = Query_TF_IDF(query)
-    print(query_TFIDF)
+    query_TFIDF = {k: v for k, v in query_TFIDF}
+    topKResults = returnTopKResults(query_TFIDF, docu_TFIDF)
+
+
