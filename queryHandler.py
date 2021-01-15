@@ -3,6 +3,8 @@ from stemmer import stemQuery
 import os
 import math
 import numpy as np
+from numpy import dot
+from numpy.linalg import norm
 
 
 def findRelevantDocuments(query):
@@ -35,44 +37,65 @@ def calculateTF_IDF(query):
                 continue
             TF = freq_in_doc / max_freq
             ni = len(relDoc.get(key).keys())
+            print(freq_in_doc)
             IDF = math.log(N / ni, 10)
             result = TF * IDF
-            atuple = {key: result}
+            atuple = (key, result)
             tuple_list.append(atuple)
             doc_dict[url] = tuple_list
+    for url in doc_dict.keys():
+        doc_dict[url] = Convert(doc_dict.get(url), dict())
+
     return doc_dict
+
+
+def Convert(tup, di):
+    di = dict(tup)
+    return di
 
 
 def Query_TF_IDF(query):
     query = np.array(query)
-    print(query)
     freq = []
     relDoc = findRelevantDocuments(query)
-
     for word in query:
         times = np.where(query == word)
         freq.append(len(times[0]))
     tfIdfList = list()
-    mafTF = max(freq)
+    maxTF = max(freq)
     for i in range(0, len(query)):
-        tf = freq[i] / mafTF
-        ni = len(relDoc.get(query[i]).keys())
+        tf = freq[i] / maxTF
+        aDict = relDoc.get(query[i])
+        if aDict is None:
+            continue
+        ni = len(aDict.keys())
         idf = math.log(N / ni, 10)
         aTuple = (query[i], tf * idf)
         tfIdfList.append(aTuple)
     return tfIdfList
 
 
+def calculateCosineSim(queryArray, docuArray):
+    cosSim = np.dot(queryArray, docuArray) / (norm(queryArray) * norm(docuArray))
+    np.seterr('raise')
+    return cosSim
+
+
 def returnTopKResults(query_TFIDF, docu_TFIDF):
     cosineSimilarityDict = dict()
-    query_Tuple = tuple(v for v in query_TFIDF.values())
+    queryArray = np.array(list(query_TFIDF.values()))
     for url in docu_TFIDF.keys():
-        docu_Tuple = tuple(0 for _ in query_TFIDF)
-        for word in docu_TFIDF.get(url).keys():
-            if word not in query_TFIDF.keys():
-                #calcute cosine similarity for the given tuple then insert to dict with urls as keys then sort for values then return the top k
-
-    return 0
+        i = 0
+        docuArray = np.zeros(shape=len(query_TFIDF))
+        wordDict = docu_TFIDF.get(url)
+        for query in query_TFIDF.keys():
+            if query in wordDict.keys():
+                docuArray[i] = wordDict.get(query)
+            else:
+                pass
+            i += 1
+        cosineSimilarityDict.update({url: calculateCosineSim(queryArray, docuArray)})
+    print(cosineSimilarityDict)
 
 
 def processQuery(query):
@@ -80,9 +103,8 @@ def processQuery(query):
     global freq_dict
     index_dict = file_to_dict('Indexer/invertedIndex.pkl')
     freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
-    docu_TFIDF = calculateTF_IDF(stemQuery(query))
+    query = stemQuery(query)
+    docu_TFIDF = calculateTF_IDF(query)
     query_TFIDF = Query_TF_IDF(query)
     query_TFIDF = {k: v for k, v in query_TFIDF}
     topKResults = returnTopKResults(query_TFIDF, docu_TFIDF)
-
-
