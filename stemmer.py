@@ -8,6 +8,7 @@ import os
 
 url_dict = dict()
 freq_dict = dict()
+count_dict = dict()
 
 
 def stemSentence(sentence):
@@ -51,17 +52,21 @@ def stemDictionary(numberOfIndexes):
     dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
 
 
-def stemQuery():
-    text = aTextItem.return_list()
-    url = aTextItem.return_url()
-    string_text = ' '.join(text)
-    string_text = string_text.lower()
-    string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
-    string_text = string_text.strip()
-    makeUrlDict(url, stemSentence(string_text))
+# def stemQuery():
+#     text = aTextItem.return_list()
+#     url = aTextItem.return_url()
+#
+#     string_text = ' '.join(text)
+#     string_text = string_text.lower()
+#     string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
+#     string_text = string_text.strip()
+#     makeUrlDict(url, stemSentence(string_text))
 
 
 def makeUrlDict(url, stemmedTokens):
+    lenof = len(stemmedTokens)
+    count_dict.update({url: lenof})  # update anyway, if url exist still must be updated
+    print(url, 'urlsssssssss in make url dict ')
     word_dict = dict()
     for stemmedToken in stemmedTokens:
         if stemmedToken not in word_dict.keys():
@@ -91,6 +96,8 @@ def return_freq():
 def return_UrlDict():
     return url_dict
 
+def return_count_dict():
+    return count_dict
 
 def stemQuery(query):
     porter = PorterStemmer()

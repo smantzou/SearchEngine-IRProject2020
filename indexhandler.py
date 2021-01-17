@@ -1,4 +1,4 @@
-from stemmer import stemDictionary, return_UrlDict, return_freq
+from stemmer import stemDictionary, return_UrlDict, return_freq, return_count_dict
 from general import *
 
 
@@ -8,8 +8,18 @@ def initIndexProcess(numberOfIndexes):
     global index_dict
     index_dict = loadIndexFileToDict('Indexer/invertedIndex.pkl')
     indexDict(url_dict, 'Indexer/invertedIndex.pkl')
+    if os.path.isfile('Indexer/countDict.pkl'):
+         count_dict=loadIndexFileToDict('Indexer/countDict.pkl')
+    else:count_dict=dict()
+    update_counter(count_dict)
+
     update_frequency()
 
+def update_counter(counter):
+    new_counter=return_count_dict()
+    for key in new_counter.keys():
+        counter.update({key:new_counter.get(key)})
+    dict_to_file(counter,'Indexer/countDict.pkl')
 
 def update_frequency():
     old_freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
