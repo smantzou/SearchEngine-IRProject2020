@@ -1,4 +1,6 @@
 import string
+
+import numpy as np
 from nltk.corpus import stopwords
 from general import *
 from nltk.stem import PorterStemmer
@@ -64,9 +66,6 @@ def stemDictionary(numberOfIndexes):
 
 
 def makeUrlDict(url, stemmedTokens):
-    lenof = len(stemmedTokens)
-    count_dict.update({url: lenof})  # update anyway, if url exist still must be updated
-    print(url, 'urlsssssssss in make url dict ')
     word_dict = dict()
     for stemmedToken in stemmedTokens:
         if stemmedToken not in word_dict.keys():
@@ -76,7 +75,8 @@ def makeUrlDict(url, stemmedTokens):
             word_dict.pop(stemmedToken)
             num_of_app += 1
             word_dict.update({stemmedToken: num_of_app})
-
+    array = np.array(list(word_dict.values()))
+    count_dict.update({url: array})
     values = word_dict.values()
     if values.__len__() == 0:
         freq_dict.update({url: 0})
@@ -96,8 +96,10 @@ def return_freq():
 def return_UrlDict():
     return url_dict
 
+
 def return_count_dict():
     return count_dict
+
 
 def stemQuery(query):
     porter = PorterStemmer()

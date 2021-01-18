@@ -3,9 +3,7 @@ from stemmer import stemQuery
 import os
 import math
 import numpy as np
-from numpy import dot
 from numpy.linalg import norm
-from scipy import spatial
 
 
 def findRelevantDocuments(query):
@@ -41,12 +39,12 @@ def calculateTF_IDF(query):
                 quit(1)
                 continue
 
-            TF = freq_in_doc / max_freq
-            ni = len(relDoc.get(key).keys())
-            IDF = math.log(N / ni, 10)
+            TF = math.log(freq_in_doc,10)+1
+            # ni = len(relDoc.get(key).keys())
+            # IDF = math.log(1+(N-ni / ni), 10)
             print("key N ni IDF TF URL")
-            print(key, N, ni, IDF, TF, url)
-            result = TF * IDF
+            print(key, TF, url)
+            result = TF
             atuple = (key, result)
             tuple_list.append(atuple)
             doc_dict[url] = tuple_list
@@ -79,18 +77,14 @@ def Query_TF_IDF(query):
             ni = 1
         else:
             ni = len(aDict.keys()) + 1
-        idf = math.log(N / ni, 10)
+        idf = math.log(1+(N-ni / ni), 10)
         aTuple = (query[i], tf * idf)
         tfIdfList.append(aTuple)
     return tfIdfList
 
 
-def calculateCosineSim(queryArray, docuArray):
-
-    # cosSim = np.dot(queryArray, docuArray) / (norm(queryArray) * norm(docuArray,))
-
-    cosSim = 1 - spatial.distance.cosine(queryArray, docuArray)
-    print(cosSim)
+def calculateCosineSim(queryArray, docuArray, ldocument):
+    cosSim = np.dot(queryArray, docuArray) / (1 * norm(ldocument))
     return cosSim
 
 
@@ -102,7 +96,7 @@ def returnTopKResults(query_TFIDF, docu_TFIDF):
         docuArray = np.zeros(shape=len(query_TFIDF))
         wordDict = docu_TFIDF.get(url)
         print()
-        print(wordDict , url)
+        print(wordDict, url)
         for query in query_TFIDF.keys():
             if query in wordDict.keys():
                 print(wordDict.get(query), "get query")
@@ -111,7 +105,8 @@ def returnTopKResults(query_TFIDF, docu_TFIDF):
                 pass
             i += 1
         print(queryArray, docuArray, 'arrays')
-        cosineSimilarityDict.update({url: calculateCosineSim(queryArray, docuArray)})
+        ldocuVector=count_dict.get(url)
+        cosineSimilarityDict.update({url: calculateCosineSim(queryArray, docuArray, ldocuVector)})
     cosineSimilarityDict = {k: v for k, v in
                             sorted(cosineSimilarityDict.items(), key=lambda item: item[1], reverse=True)}
     print(cosineSimilarityDict)
@@ -121,6 +116,8 @@ def returnTopKResults(query_TFIDF, docu_TFIDF):
 def processQuery(query):
     global index_dict
     global freq_dict
+    global count_dict
+    count_dict = file_to_dict("Indexer/countDict.pkl")
     index_dict = file_to_dict('Indexer/invertedIndex.pkl')
     freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
     query = stemQuery(query)
