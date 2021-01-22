@@ -23,10 +23,13 @@ def write_file(path, data):
 def create_index_files(project):
     freqDict = project + '/freq_dictionary.pkl'
     tempIndex = project + '/invertedIndex.pkl'
+    countdict = project + '/countDict.pkl'
     if not os.path.isfile(tempIndex):
         write_file(tempIndex, '')
     if not os.path.isfile(freqDict):
         write_file(freqDict, '')
+    if not os.path.isfile(countdict):
+        write_file(countdict, '')
 
 
 # Create queue and crawled files

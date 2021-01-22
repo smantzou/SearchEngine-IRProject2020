@@ -6,16 +6,22 @@ from general import *
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from num2words import num2words
-import os
 
-url_dict = dict()
+
 freq_dict = dict()
 count_dict = dict()
 
 
-def stemSentence(sentence):
+def stemPage(page):
     porter = PorterStemmer()
-    token_words = word_tokenize(sentence)
+    text = page[1]
+    url = page[0]
+    string_text = ' '.join(text)
+    string_text = string_text.lower()
+    string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
+    string_text = string_text.strip()
+
+    token_words = word_tokenize(string_text)
     stop_words = set(stopwords.words('english'))
     token_words = [i for i in token_words if not i in stop_words]
     stem_sentence = []
@@ -27,47 +33,14 @@ def stemSentence(sentence):
         else:
             if not isEnglish(word):
                 continue
-
         stem_sentence.append(porter.stem(word))
-    return stem_sentence
+    return makeUrlDict(url, stem_sentence)
 
 
-def stemDictionary(numberOfIndexes):
-    crawlDict = file_to_dict('Crawler/dictionary.pkl')
-    if crawlDict.__len__() == 0:
-        print("Crawled Dictionary is empty...All crawled pages have been indexed ,please crawl some pages first! ")
-        os._exit(0)
-    if int(numberOfIndexes) > crawlDict.__len__():
-        print("Requested number of indexes larger than crawled pages...Crawled Dictionary will be empty after run!")
-        numberOfIndexes = crawlDict.__len__()
-    for _ in range(0, int(numberOfIndexes)):
-        crawlDictItem = crawlDict.popitem()
-        aTextItem = crawlDictItem[1]
-        text = aTextItem.return_list()
-        url = aTextItem.return_url()
-        string_text = ' '.join(text)
-        string_text = string_text.lower()
-        string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
-        string_text = string_text.strip()
-        makeUrlDict(url, stemSentence(string_text))
-
-    dict_to_file(crawlDict, 'Crawler/dictionary.pkl')
-
-
-# def stemQuery():
-#     text = aTextItem.return_list()
-#     url = aTextItem.return_url()
-#
-#     string_text = ' '.join(text)
-#     string_text = string_text.lower()
-#     string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
-#     string_text = string_text.strip()
-#     makeUrlDict(url, stemSentence(string_text))
-
-
-def makeUrlDict(url, stemmedTokens):
+def makeUrlDict(url, stemSentence):
+    url_dict = dict()
     word_dict = dict()
-    for stemmedToken in stemmedTokens:
+    for stemmedToken in stemSentence:
         if stemmedToken not in word_dict.keys():
             word_dict.update({stemmedToken: 1})
         else:
@@ -83,18 +56,15 @@ def makeUrlDict(url, stemmedTokens):
     else:
         maxf = max(values)
         freq_dict.update({url: maxf})
-
     url_dict.update({url: {}})
     v = word_dict
     url_dict[url] = v
 
+    return url_dict
+
 
 def return_freq():
     return freq_dict
-
-
-def return_UrlDict():
-    return url_dict
 
 
 def return_count_dict():

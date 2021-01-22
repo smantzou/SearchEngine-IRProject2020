@@ -7,8 +7,7 @@ from general import *
 import sys
 import os
 import time
-#NA eksagoyme mono ena kommati ths queuefile etsi wste na mhn exoyme toso megala i/o
-#Na mhn diagrafete to crawled.txt gia na mporw na allaksw xwro toy web poy crawlrw
+
 
 #  create a worker set(will die with main)
 def create_workers():
