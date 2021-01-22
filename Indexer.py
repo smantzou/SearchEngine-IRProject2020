@@ -5,7 +5,6 @@ from index import Index
 import sys
 from general import *
 from timeit import default_timer as timer
-from textItem import *
 
 
 def create_workers():
@@ -15,17 +14,15 @@ def create_workers():
         t.start()
 
 
-def index(i=0):
-    while queue.empty() is False:
+def index():
+    while not queue.empty():
         page = queue.get()
         Index.indexPage(page)
-        i += 1
         queue.task_done()
 
 
 def pre_index():
     index()
-    time.sleep(5)
 
 
 def create_jobs():
@@ -37,7 +34,7 @@ if __name__ == '__main__':
     PROJECT_NAME = 'Indexer'
     create_project_dir(PROJECT_NAME)
     create_index_files(PROJECT_NAME)
-    TEMP_INDEX_FILE = PROJECT_NAME + 'invertedIndex.pkl'
+    INDEX_FILE = PROJECT_NAME + 'invertedIndex.pkl'
     MAX_NUMBER_OF_INDEXES = int(sys.argv[1])
     keep_old_files = sys.argv[2]
     NUMBER_OF_THREADS = int(sys.argv[3])
@@ -47,7 +44,7 @@ if __name__ == '__main__':
     Index()
     crawlDict = file_to_dict('Crawler/dictionary.pkl')
     partialCrawlDict = dict()
-    if crawlDict.__len__() is 0:
+    if crawlDict.__len__() == 0:
         print("Crawl Dictionary is Empty ... Please crawl some pages first!")
         os._exit(0)
     if MAX_NUMBER_OF_INDEXES > crawlDict.__len__():
@@ -62,6 +59,7 @@ if __name__ == '__main__':
     queue = Queue()
     create_jobs()
     create_workers()
+    queue.join()
     Index.saveIndex()
     end = timer()
     print('Elapsed time : ' + str(end - start))

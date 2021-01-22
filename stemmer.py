@@ -1,18 +1,15 @@
 import string
-
 import numpy as np
-from nltk.corpus import stopwords
 from general import *
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from num2words import num2words
 
-
 freq_dict = dict()
 count_dict = dict()
 
 
-def stemPage(page):
+def stemPage(page, stopWords):
     porter = PorterStemmer()
     text = page[1]
     url = page[0]
@@ -20,10 +17,8 @@ def stemPage(page):
     string_text = string_text.lower()
     string_text = string_text.translate(string_text.maketrans('', '', string.punctuation))
     string_text = string_text.strip()
-
     token_words = word_tokenize(string_text)
-    stop_words = set(stopwords.words('english'))
-    token_words = [i for i in token_words if not i in stop_words]
+    token_words = [i for i in token_words if not i in stopWords]
     stem_sentence = []
     for word in token_words:
         if word.isdigit():
@@ -34,6 +29,7 @@ def stemPage(page):
             if not isEnglish(word):
                 continue
         stem_sentence.append(porter.stem(word))
+
     return makeUrlDict(url, stem_sentence)
 
 
@@ -54,12 +50,11 @@ def makeUrlDict(url, stemSentence):
     if values.__len__() == 0:
         freq_dict.update({url: 0})
     else:
-        maxf = max(values)
-        freq_dict.update({url: maxf})
+        maxF = max(values)
+        freq_dict.update({url: maxF})
     url_dict.update({url: {}})
     v = word_dict
     url_dict[url] = v
-
     return url_dict
 
 
@@ -71,6 +66,7 @@ def return_count_dict():
     return count_dict
 
 
+# Need to send stop words as arguement
 def stemQuery(query):
     porter = PorterStemmer()
     sentence = ' '.join(query)
