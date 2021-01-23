@@ -1,3 +1,5 @@
+import threading
+
 from stemmer import *
 from nltk.corpus import stopwords
 import threading

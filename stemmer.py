@@ -9,7 +9,7 @@ freq_dict = dict()
 count_dict = dict()
 
 
-def stemPage(page, stopWords):
+def stebmPage(page, stopWords):
     porter = PorterStemmer()
     text = page[1]
     url = page[0]

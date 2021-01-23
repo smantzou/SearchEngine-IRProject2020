@@ -21,6 +21,7 @@ def index():
         queue.task_done()
 
 
+
 def pre_index():
     index()
 
@@ -61,5 +62,6 @@ if __name__ == '__main__':
     create_workers()
     queue.join()
     Index.saveIndex()
+
     end = timer()
     print('Elapsed time : ' + str(end - start))
