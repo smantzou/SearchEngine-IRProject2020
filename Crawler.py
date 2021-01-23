@@ -32,6 +32,7 @@ def work(i=0):
         fifo_queue.task_done()
         i += 1
 
+
 # each queued link is a new job
 
 
@@ -67,3 +68,7 @@ if __name__ == '__main__':
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
     crawl()
+
+# TO DO FOR NEXT TIME
+# SOLVE THE PROBLEM OF THE HEURISTIC ALG APPROACH TO CRAWLING
+# QUERY PROCESSOR MULTITHREADING BEGIN

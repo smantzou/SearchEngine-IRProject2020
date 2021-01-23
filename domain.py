@@ -28,6 +28,7 @@ def get_sub_domain_name(url):
     except:
         return ''
 
+
 def isAllowed(url):
     try:
         url = get_tld(url, fail_silently=True, as_object=True)
