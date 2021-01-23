@@ -1,5 +1,6 @@
 from stemmer import *
 from nltk.corpus import stopwords
+import threading
 
 
 class Index:
@@ -7,6 +8,7 @@ class Index:
     count_dict = dict()
     freq_dict = dict()
     stopwords = set()
+    lock = threading.Lock()
 
     def __init__(self):
         self.boot()
@@ -30,24 +32,36 @@ class Index:
         for urlKey in urlDict.keys():
             word_dict = urlDict.get(urlKey)
             for wordKey in word_dict.keys():
-                if wordKey in Index.index_dict.keys():
-                    Index.index_dict.get(wordKey).update({urlKey: word_dict.get(wordKey)})
-                else:
-                    Index.index_dict.update({wordKey: {}})
-                    v = {urlKey: word_dict.get(wordKey)}
-                    Index.index_dict[wordKey] = v
+                Index.lock.acquire()
+                try:
+                    if wordKey in Index.index_dict.keys():
+                        Index.index_dict.get(wordKey).update({urlKey: word_dict.get(wordKey)})
+                    else:
+                        Index.index_dict.update({wordKey: {}})
+                        v = {urlKey: word_dict.get(wordKey)}
+                        Index.index_dict[wordKey] = v
+                finally:
+                    Index.lock.release()
 
     @staticmethod
     def updateCounter():
         new_counter = return_count_dict()
         for key in new_counter.keys():
-            Index.count_dict.update({key: new_counter.get(key)})
+            Index.lock.acquire()
+            try:
+                Index.count_dict.update({key: new_counter.get(key)})
+            finally:
+                Index.lock.release()
 
     @staticmethod
     def updateFrequency():
         new_freq_dict = return_freq()
         for key in new_freq_dict.keys():
-            Index.freq_dict.update({key: new_freq_dict.get(key)})
+            Index.lock.acquire()
+            try:
+                Index.freq_dict.update({key: new_freq_dict.get(key)})
+            finally:
+                Index.lock.release()
 
     @staticmethod
     def saveIndex():
@@ -55,8 +69,7 @@ class Index:
         dict_to_file(Index.count_dict, 'Indexer/countDict.pkl')
         dict_to_file(Index.freq_dict, 'Indexer/freq_dictionary.pkl')
 
-#TO DO FOR NEXT TIME
-#MAKE COUNT DICT AND FREQ DICT
-#SETS IN RUNTIME TO AVOID
-#RuntimeError: dictionary changed size during iteration
-
+# TO DO FOR NEXT TIME
+# MAKE COUNT DICT AND FREQ DICT
+# SETS IN RUNTIME TO AVOID
+# RuntimeError: dictionary changed size during iteration
