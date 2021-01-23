@@ -28,20 +28,7 @@ def get_sub_domain_name(url):
     except:
         return ''
 
-
-# def getLangFolder(url):
-#     if url.split('/').__len__() > 1:
-#         langFolder = url.split('/')[1]
-#         if langFolder in allowedSUBs:
-#             return True
-#         else:
-#             return False
-#     else:
-#         return True
-
-
 def isAllowed(url):
-    # langFolder = getLangFolder(url)
     try:
         url = get_tld(url, fail_silently=True, as_object=True)
         if url.tld in allowedTLDs:

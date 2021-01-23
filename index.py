@@ -24,8 +24,10 @@ class Index:
 
     @staticmethod
     def indexPage(page, threadName):
-        print("Thread: " + threadName + " |Indexing page " + str(page[0]))
+        print(threadName + " |Indexing page " + str(page[0]))
         urlDict = stemPage(page, Index.stopwords)  # stem the page
+        if urlDict.values().__len__() == 0:
+            return 0
         Index.updateIndex(urlDict)  # update the invertedIndex
         Index.updateCounter()
         Index.updateFrequency()
@@ -48,23 +50,23 @@ class Index:
 
     @staticmethod
     def updateCounter():
-        new_counter = return_count_dict()
-        for key in new_counter.keys():
-            Index.lock.acquire()
-            try:
+        Index.lock.acquire()
+        try:
+            new_counter = return_count_dict()
+            for key in new_counter.keys():
                 Index.count_dict.update({key: new_counter.get(key)})
-            finally:
-                Index.lock.release()
+        finally:
+            Index.lock.release()
 
     @staticmethod
     def updateFrequency():
-        new_freq_dict = return_freq()
-        for key in new_freq_dict.keys():
-            Index.lock.acquire()
-            try:
+        Index.lock.acquire()
+        try:
+            new_freq_dict = return_freq()
+            for key in new_freq_dict.keys():
                 Index.freq_dict.update({key: new_freq_dict.get(key)})
-            finally:
-                Index.lock.release()
+        finally:
+            Index.lock.release()
 
     @staticmethod
     def saveIndex():

@@ -18,6 +18,7 @@ class Spider:
     crawled = set()
     textDict = dict()
     dictCount = 0
+    bannedResponses = ['application', 'image', 'xml']
 
     def __init__(self, project_name, base_url, domain_name):
         Spider.project_name = project_name
@@ -28,8 +29,10 @@ class Spider:
         Spider.dict_file = Spider.project_name + '/dictionary.pkl'
         self.boot()
         Spider.textDict = file_to_dict(Spider.dict_file)
-
-        Spider.dictCount = Spider.textDict.__len__()
+        if Spider.textDict.__len__() == 0:
+            Spider.dictCount = 1
+        else:
+            Spider.dictCount = list(Spider.textDict.keys())[-1] + 1
         self.crawl_page('First Spider', Spider.base_url)
 
     @staticmethod
@@ -52,11 +55,13 @@ class Spider:
 
     @staticmethod
     def gather_links(page_url):
-
         html_string = ''
         try:
-
             response = urlopen(page_url)
+            if response.getheader('Content-Type').split('/')[0] in Spider.bannedResponses:
+                raise Exception("Invalid Response")
+            if response.getheader('Content-Type').split('/')[1] in Spider.bannedResponses:
+                raise Exception("Invalid Response")
             if response.getheader('Content-Type').split(';')[0] == 'text/html':
                 html_bytes = response.read()
                 html_string = html_bytes.decode("utf-8")
@@ -64,7 +69,6 @@ class Spider:
             finder.handle_starttag(html_string)
             aTextItem = textItem(parse.urljoin(Spider.base_url, page_url), finder.return_url_text(html_string))
             Spider.textDict.update({Spider.dictCount: aTextItem})
-
             Spider.dictCount += 1
         except Exception as ex:
             print(ex)

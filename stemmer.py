@@ -9,7 +9,7 @@ freq_dict = dict()
 count_dict = dict()
 
 
-def stebmPage(page, stopWords):
+def stemPage(page, stopWords):
     porter = PorterStemmer()
     text = page[1]
     url = page[0]
@@ -19,18 +19,22 @@ def stebmPage(page, stopWords):
     string_text = string_text.strip()
     token_words = word_tokenize(string_text)
     token_words = [i for i in token_words if not i in stopWords]
-    stem_sentence = []
+    stemSentence = []
     for word in token_words:
         if word.isdigit():
             if word.__len__() > 5:
+                continue
+            if isDecimal(word):
                 continue
             word = num2words(word)
         else:
             if not isEnglish(word):
                 continue
-        stem_sentence.append(porter.stem(word))
-
-    return makeUrlDict(url, stem_sentence)
+        stemSentence.append(porter.stem(word))
+    if stemSentence.__len__() == 0:
+        print(url, " has no words")
+        return dict()
+    return makeUrlDict(url, stemSentence)
 
 
 def makeUrlDict(url, stemSentence):
@@ -64,6 +68,14 @@ def return_freq():
 
 def return_count_dict():
     return count_dict
+
+
+def isDecimal(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
 # Need to send stop words as arguement
