@@ -3,7 +3,6 @@ from urllib import parse
 from textItem import *
 from link_finder import LinkFinder
 from general import *
-from tld import get_tld
 
 
 class Spider:
@@ -61,7 +60,6 @@ class Spider:
             if response.getheader('Content-Type').split(';')[0] == 'text/html':
                 html_bytes = response.read()
                 html_string = html_bytes.decode("utf-8")
-            # res = get_tld(page_url, as_object=True)
             finder = LinkFinder(Spider.base_url, page_url)
             finder.handle_starttag(html_string)
             aTextItem = textItem(parse.urljoin(Spider.base_url, page_url), finder.return_url_text(html_string))

@@ -17,7 +17,7 @@ def create_workers():
 def index():
     while not queue.empty():
         page = queue.get()
-        Index.indexPage(page)
+        Index.indexPage(page, threading.Thread().name)
         queue.task_done()
 
 

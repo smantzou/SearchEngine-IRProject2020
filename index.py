@@ -21,7 +21,8 @@ class Index:
         Index.freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
 
     @staticmethod
-    def indexPage(page):
+    def indexPage(page, threadName):
+        print("Thread: " + threadName + " |Indexing page " + str(page[0]))
         urlDict = stemPage(page, Index.stopwords)  # stem the page
         Index.updateIndex(urlDict)  # update the invertedIndex
         Index.updateCounter()
@@ -68,8 +69,3 @@ class Index:
         dict_to_file(Index.index_dict, 'Indexer/invertedIndex.pkl')
         dict_to_file(Index.count_dict, 'Indexer/countDict.pkl')
         dict_to_file(Index.freq_dict, 'Indexer/freq_dictionary.pkl')
-
-# TO DO FOR NEXT TIME
-# MAKE COUNT DICT AND FREQ DICT
-# SETS IN RUNTIME TO AVOID
-# RuntimeError: dictionary changed size during iteration
