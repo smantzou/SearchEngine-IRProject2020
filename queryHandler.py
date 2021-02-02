@@ -6,13 +6,13 @@ import numpy as np
 from numpy.linalg import norm
 
 
-def findRelevantDocuments(query):
-    doc_dict = dict()
-    for q in query:
-        word_dict = index_dict.get(q)
-        if word_dict is not None:
-            doc_dict.update({q: word_dict})
-    return doc_dict
+# def findRelevantDocuments(query):
+#     doc_dict = dict()
+#     for q in query:
+#         word_dict = index_dict.get(q)
+#         if word_dict is not None:
+#             doc_dict.update({q: word_dict})
+#     return doc_dict
 
 
 def calculateTF_IDF(query):
@@ -45,8 +45,8 @@ def calculateTF_IDF(query):
             print("key N ni IDF TF URL")
             print(key, TF, url)
             result = TF
-            atuple = (key, result)
-            tuple_list.append(atuple)
+            aTuple = (key, result)
+            tuple_list.append(aTuple)
             doc_dict[url] = tuple_list
     for url in doc_dict.keys():
         doc_dict[url] = Convert(doc_dict.get(url))
@@ -105,8 +105,8 @@ def returnTopKResults(query_TFIDF, docu_TFIDF):
                 pass
             i += 1
         print(queryArray, docuArray, 'arrays')
-        ldocuVector=count_dict.get(url)
-        cosineSimilarityDict.update({url: calculateCosineSim(queryArray, docuArray, ldocuVector)})
+        docuVector = count_dict.get(url)
+        cosineSimilarityDict.update({url: calculateCosineSim(queryArray, docuArray, docuVector)})
     cosineSimilarityDict = {k: v for k, v in
                             sorted(cosineSimilarityDict.items(), key=lambda item: item[1], reverse=True)}
     print(cosineSimilarityDict)

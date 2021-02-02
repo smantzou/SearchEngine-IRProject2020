@@ -1,5 +1,7 @@
 import string
 import numpy as np
+from nltk.corpus import stopwords
+
 from general import *
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize

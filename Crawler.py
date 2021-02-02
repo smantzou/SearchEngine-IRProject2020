@@ -27,15 +27,9 @@ def pre_work():
 
 def work(i=0):
     while i < jobs_per_thread:
-        if i < jobs_per_thread / 2:
-            url = fifo_queue.get()
-        else:
-            url = lifo_queue.get()
+        url = fifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
-        if i < jobs_per_thread / 2:
-            fifo_queue.task_done()
-        else:
-            lifo_queue.task_done()
+        fifo_queue.task_done()
         i += 1
 
 # each queued link is a new job
@@ -44,9 +38,7 @@ def work(i=0):
 def create_jobs():
     for link in file_to_set(QUEUE_FILE):
         fifo_queue.put(link)
-        lifo_queue.put(link)
     fifo_queue.join()
-    lifo_queue.join()
     crawl()
 
 
@@ -71,7 +63,6 @@ if __name__ == '__main__':
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
     jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
-    lifo_queue = queue.LifoQueue()
     fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
