@@ -2,6 +2,8 @@ import math
 import threading
 import numpy as np
 from nltk.corpus import stopwords
+from numpy.linalg import norm
+
 from general import *
 import os
 
@@ -15,7 +17,7 @@ class Query:
     lock = threading.Lock()
     query = []
     query_TF_IDF = list()
-    document_TF_IDF = dict()
+    documentCosSim = dict()
     N = 0
 
     def __init__(self, query):
@@ -24,6 +26,7 @@ class Query:
     @staticmethod
     def boot(query):
         Query.query = query
+
         Query.stopwords = set(stopwords.words('english'))
         Query.index_dict = file_to_dict('Indexer/invertedIndex.pkl')
         Query.count_dict = file_to_dict('Indexer/countDict.pkl')
@@ -31,8 +34,6 @@ class Query:
         Query.N = Query.freq_dict.__len__()
         Query.relDoc = Query.findRelevantDocuments()
         Query.query_TF_IDF = Query.Query_TF_IDF()
-
-
 
     @staticmethod
     def findRelevantDocuments():
@@ -57,14 +58,15 @@ class Query:
             tf = freq[i] / maxTF
             aDict = Query.relDoc.get(Query.query[i])
             if aDict is None:
-                print('Not found these word  in web ', Query.query[i], 'so tfidf will be zero')
                 ni = 1
             else:
                 ni = len(aDict.keys()) + 1
             idf = math.log(1 + ((Query.N - ni) / ni), 10)
             aTuple = (Query.query[i], tf * idf)
             tfIdfList.append(aTuple)
-        return tfIdfList
+        tfIdfList = {k: v for k, v in tfIdfList}
+        queryArray = np.array(list(tfIdfList.values()))
+        return queryArray
 
     @staticmethod
     def unInvertIndex():
@@ -85,10 +87,63 @@ class Query:
 
         return doc_dict
 
-    def Convert(tup):
-        di = dict(tup)
+    def Convert(tuplet):
+        di = dict(tuplet)
         return di
+
+    @staticmethod
+    def calculateTF_IDF(document):
+        url = document
+        docuArray = np.zeros(shape=len(Query.query_TF_IDF))
+        i = 0
+        querySet = set(Query.query)
+        for q in querySet:
+            if q in Query.index_dict.keys():
+                if url in Query.index_dict.get(q).keys():
+                    freq_in_doc = Query.index_dict.get(q).get(url)
+                else:
+                    i += 1
+                    continue
+            else:
+                i += 1
+                continue
+            TF = math.log(freq_in_doc, 10) + 1
+            result = TF
+            docuArray[i] = result
+            i += 1
+        docuLength = Query.count_dict.get(url)
+        cosSim = Query.calculateCosSim(docuArray, docuLength)
+        Query.updateCosineDict(url, cosSim)
 
     @staticmethod
     def returnRelevantDocuments():
         return Query.relDoc
+
+    @staticmethod
+    def calculateCosSim(docuArray, docuLength):
+        cosSim = np.dot(Query.query_TF_IDF, docuArray) / (1 * norm(docuLength))
+        return cosSim
+
+    @staticmethod
+    def updateCosineDict(url, cosSim):
+        # Query.documentCosSim.add((url, cosSim))
+        Query.lock.acquire()
+        try:
+            Query.documentCosSim.update({url: cosSim})
+        finally:
+            Query.lock.release()
+
+    @staticmethod
+    def returnTopKResults(k):
+        Query.documentCosSim = {k: v for k, v in
+                                sorted(Query.documentCosSim.items(), key=lambda item: item[1], reverse=True)}
+        i = 0
+        for key in Query.documentCosSim.keys():
+            print(key, Query.documentCosSim.get(key))
+            i += 1
+            if i is k:
+                break
+
+    @staticmethod
+    def printCosSimDict():
+        print(Query.documentCosSim)
