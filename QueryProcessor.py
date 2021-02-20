@@ -8,7 +8,7 @@ import multiprocessing
 
 """ This function create threads-workers that will be used later"""
 
-
+NUMBER_OF_THREADS = multiprocessing.cpu_count() - 3
 def create_workers():
     for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=calculateTF_IDF)
@@ -23,7 +23,7 @@ The threads stop when the queue is empty"""
 def calculateTF_IDF():
     while not queue.empty():
         document = queue.get()
-        Query.calculateTF_IDF(document)
+        Query.calculateTFofdocument(document, True)
         queue.task_done()
 
 
@@ -38,13 +38,8 @@ def create_jobs():
 """Here we specify the number of threads that will be used with respect of the number of cores"""
 
 
-#
 def numberOfThreads():
     return multiprocessing.cpu_count()
-
-
-
-
 
 
 def processQuery(topKResults, query):
@@ -68,6 +63,7 @@ def processQuery(topKResults, query):
     return Query.returnTopKResults(TOP_K_RESULTS)
 
 
+processQuery(10, "python stack developer stack")
 
 #
 # if __name__ == '__main__':
@@ -91,8 +87,3 @@ def processQuery(topKResults, query):
 #     Query.returnTopKResults(TOP_K_RESULTS)
 #     end = timer()
 #     print('Elapsed time : ' + str(end - start))
-
-# WE HAVE THE UNINVERTED INDEX
-# MAKE THREADS FIND THE TF IDF OF EVERY URL
-# THEN MAKE THREADS FIND THE COS SIM OF EVERY URL
-# SORT AND PRINT THE TOP K

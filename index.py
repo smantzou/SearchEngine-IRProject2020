@@ -34,7 +34,7 @@ class Index:
         # positionDict = makePositionDict(wordDict)
         if urlDict.values().__len__() == 0:
             return 0
-        Index.updatePositon(page[0], positionDict)
+        Index.updatePosition(page[0], positionDict)
         Index.updateIndex(urlDict)  # update the invertedIndex
         Index.updateCounter()
         Index.updateFrequency()
@@ -87,7 +87,7 @@ class Index:
 
     """In this method we update the position Dictionary with the already made position dictionary"""
     @staticmethod
-    def updatePositon(page, positions):
+    def updatePosition(page, positions):
         Index.lock.acquire()
         try:
             Index.position_dict.update({page: positions})

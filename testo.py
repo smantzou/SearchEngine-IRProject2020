@@ -1,7 +1,7 @@
 from general import *
 import numpy as np
 # from query import *
-pos= file_to_dict("Indexer/position_dict.pkl")
+pos= file_to_dict("Indexer/invertedIndex.pkl")
 #
 # positions = Query.positionDict.get(url).values()
 #         docuWords = list(positions)
