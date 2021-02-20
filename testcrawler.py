@@ -10,15 +10,20 @@ import time
 import numpy
 
 
-#  create a worker set(will die with main)
+class MyThread(threading.Thread):
+    def __init__(self, number, target):
+        super(MyThread, self).__init__()
+        self.number = number
+        self._target = target
+
 
 def create_workers():
     array = jobsPerThread(MAX_NUMBER_OF_CRAWLS)
     for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=pre_work, args=(array[n],))
         t.daemon = True
+        threadList.append(t)
         t.start()
-
 
 
 def jobsPerThread(crawls):
@@ -50,7 +55,6 @@ def pre_work():
 
 # do the next job in the queue
 
-
 def work(k):
     for i in range(k):
         url = fifo_queue.get()
@@ -59,8 +63,6 @@ def work(k):
 
 
 # each queued link is a new job
-
-
 def create_jobs():
     for link in file_to_set(QUEUE_FILE):
         fifo_queue.put(link)
@@ -77,6 +79,7 @@ def crawl():
 
 
 if __name__ == '__main__':
+
     PROJECT_NAME = 'Crawler'
     HOMEPAGE = sys.argv[1]
     DOMAIN_NAME = get_domain_name(HOMEPAGE)
@@ -84,16 +87,21 @@ if __name__ == '__main__':
     CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
     DICT_FILE = PROJECT_NAME + '/dictionary.pkl'
     TITLE_DICT = PROJECT_NAME + '/titleDict.pkl'
+    QUEUE = 0
     NUMBER_OF_THREADS = int(sys.argv[4])
-    MAX_NUMBER_OF_CRAWLS = int(sys.argv[2]) - 1
+    MAX_NUMBER_OF_CRAWLS = int(sys.argv[2])
     keep_old_files = bool(int(sys.argv[3]))
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
-    jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
-    fifo_queue = Queue()
+    jobs_per_thread = MAX_NUMBER_OF_CRAWLS // NUMBER_OF_THREADS
+    fifo_queue = Queue(MAX_NUMBER_OF_CRAWLS)
+    print(fifo_queue.maxsize, "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
+    # twp = TaskWorkerPool(NUMBER_OF_THREADS)
+
     create_workers()
     crawl()
+    # create_jobs()
 
 # TO DO FOR NEXT TIME
 # SOLVE THE PROBLEM OF THE HEURISTIC ALG APPROACH TO CRAWLING
