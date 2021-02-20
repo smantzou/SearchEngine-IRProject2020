@@ -37,12 +37,10 @@ def jobsPerThread(crawls):
     return arrayOfJobs
 
 
-def pre_work():
-    array = jobsPerThread(MAX_NUMBER_OF_CRAWLS)
-    for i in array:
-        work(i)
-    while fifo_queue.empty():
-        time.sleep(2)
+def pre_work(k):
+
+    work(k)
+
     print(Spider.dictCount, " number of not crawled pages ")
     time.sleep(5)
     os._exit(0)
@@ -89,7 +87,7 @@ if __name__ == '__main__':
     keep_old_files = bool(int(sys.argv[3]))
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
-    jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
+    jobs_per_thread = MAX_NUMBER_OF_CRAWLS //NUMBER_OF_THREADS
     fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
