@@ -7,9 +7,10 @@ eel.init("static")
 
 @eel.expose
 def getQueryInfo(topKResults, query):
-    topKDict = processQuery(topKResults, query.split(" "))
+    topKDict, query_time = processQuery(topKResults, query.split(" "))
     titleDict = returnTitles(topKDict)
-    eel.receiveResults(topKDict, titleDict)
+    print(query_time)
+    eel.receiveResults(topKDict, titleDict, query_time)
 
 
 @eel.expose
@@ -17,9 +18,10 @@ def receiveFeedback(feedBackDict):
     urlFeedBack = dict()
     for feed in feedBackDict:
         urlFeedBack.update({feed['key']: feed['value']})
-    newTopK = feedBackQuery(urlFeedBack, urlFeedBack.__len__())
+    newTopK, query_time = feedBackQuery(urlFeedBack, urlFeedBack.__len__())
     newTitle = returnTitles(newTopK)
-    eel.receiveResults(newTopK, newTitle)
+    print(query_time)
+    eel.receiveResults(newTopK, newTitle, query_time)
 
 
 def returnTitles(urlDict):

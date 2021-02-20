@@ -77,7 +77,9 @@ function sendFeedback(){
 }
 
 eel.expose(receiveResults)
-function receiveResults(results,titles) {
+function receiveResults(results,titles,query_time) {
+    const time_span = document.getElementById('timeSpan')
+    time_span.innerHTML = ''
     k = Object.keys(results).length
     while (resultsContainer.firstChild) {
         resultsContainer.removeChild(resultsContainer.firstChild)
@@ -108,7 +110,14 @@ function receiveResults(results,titles) {
 
         resultsContainer.appendChild(newRow)
 
+        
     }
+    
+    time_span.innerHTML = 'This query took: '
+    time_span.innerHTML = time_span.innerHTML.concat(String(query_time)+ " seconds")
+    time_span.style.removeProperty('display')
+    time_span.style.display = 'initial'
+
 }
 
 
