@@ -32,6 +32,7 @@ class Query:
         else:
             Query.relDoc = Query.findRelevantDocuments(query)
             Query.unInvertedIndex = Query.unInvertIndex()
+            Query.query_TF_IDF_Dict = query  # the query is allready in tf terms
 
     @staticmethod
     def boot(query):
@@ -42,7 +43,12 @@ class Query:
         Query.freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
         Query.positionDict = file_to_dict('Indexer/position_dict.pkl')
         Query.N = Query.freq_dict.__len__()
+        if Query.N == 0:
+            print("nothing in inverted index ")
+
         Query.query_TF_IDF_Dict = Query.Query_TF_IDF()
+        Query.relDoc = Query.findRelevantDocuments(Query.query_TF_IDF_Dict)
+        Query.unInvertedIndex = Query.unInvertIndex()
 
     """This static method returns a part of inverted index only with these words tha query has """
 
@@ -117,7 +123,6 @@ class Query:
             wordNum = wordDict.get(word)
             wordNum = np.log(wordNum) + 1
             tfDict.update({word: wordNum})
-
         if flag:
             cosSim = Query.calculateCosSim(Query.query_TF_IDF_Dict, tfDict)
             Query.updateCosineDict(url, cosSim)
@@ -149,7 +154,7 @@ class Query:
 
     @staticmethod
     def feedback(pageFeedback):
-        aParameter = 0.3
+        aParameter = 1
         bParameter = 0.5
         gParameter = 0.3
         positiveDictionary = dict()
@@ -182,7 +187,7 @@ class Query:
             if positiveDictionary.get(word) is None:
                 pass
             else:
-                result = positiveDictionary.get(word) - word.values()
+                result = positiveDictionary.get(word) - negativeDictionary.get(word)
                 if result > 0:
                     theNewQuery.update({word: result})
         return theNewQuery
@@ -201,44 +206,11 @@ class Query:
         for word in newDict.keys():
             newDict.update({word: newDict.get(word) / size})
         return newDict
-        # query=set(Query.query)
-        # wordsINquery = np.array(query)
-        # queryArray = np.zeros(shape=(len(docuTFarray),), dtype=float)
-        # i = 0
-        # for termTF in queryDict:
-        #     queryArray[i] = termTF
-        #     i += 1
-        # print(queryDict)
-        # # protes leksis me tf meta midenika
-        #
-        # dotProduct = 0
-        # i = 0
-        # for word in wordsINquery:
-        #     if word in documentDict:
-        #         tupleOfword = word.valeus()
-        #
-        #         # take the tf of term tha is in docu and query
-        #         if i < len(wordsINquery):
-        #             wordTuple = documentDict.get(word)
-        #             wordTF = wordTuple[1]  # take the tf of this word
-        #             positionInquery = np.where(wordsINquery == word)
-        #             position = positionInquery[0]
-        #             print(wordsINquery[position], word, queryArray[position], wordTF, "hereeeeeeeeee")
-        #             dotProduct += np.dot(queryArray[position], wordTF)
-        #         else:
-        #             break
-        #
-        # cosSim = dotProduct / 1 * norm(docuTFarray)
-        # print(norm(docuTFarray), "normaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-        #
-        # # cosSim = np.dot(Query.query_TF_IDF, docuTFarray) / (1 * norm(docuTFarray))
-        # return cosSim
 
-    """We store every cosine similarity of every page with the query at a dictionary """
+    """We store every cosine similarity of every page with the query at a dictionary, important is """
 
     @staticmethod
     def updateCosineDict(url, cosSim):
-        # Query.documentCosSim.add((url, cosSim))
         Query.lock.acquire()
         try:
             Query.documentCosSim.update({url: cosSim})
@@ -263,32 +235,3 @@ class Query:
     @staticmethod
     def printCosSimDict():
         print(Query.documentCosSim)
-
-    #
-    # @staticmethod
-    # def calculateTF_IDF(document):
-    #     # Here we have dict from url to wordDict
-    #     url = document
-    #     # docuArray = np.zeros(shape=len(Query.query_TF_IDF))
-    #     tfDictionary = Query.calculateTFofdocument(url)
-    #     # wordDict = Query.positionDict.get(url)
-    #
-    #     # i = 0
-    #     # querySet = set(Query.query)
-    #     # for q in querySet:
-    #     #     if q in Query.index_dict.keys():
-    #     #         if url in Query.index_dict.get(q).keys():
-    #     #             freq_in_doc = Query.index_dict.get(q).get(url)
-    #     #             print(freq_in_doc,q,"h lekseiiii ")
-    #     #         else:
-    #     #             i += 1
-    #     #             continue
-    #     #     else:
-    #     #         i += 1
-    #     #         continue
-    #         # TF = math.log(freq_in_doc, 10) + 1
-    #         # result = TF
-    #         # docuArray[i] = result
-    #
-    #     cosSim = Query.calculateCosSim(Query.query_TF_IDF_Dict, tfDictionary)
-    #     Query.updateCosineDict(url, cosSim)

@@ -9,6 +9,8 @@ import multiprocessing
 """ This function create threads-workers that will be used later"""
 
 NUMBER_OF_THREADS = multiprocessing.cpu_count() - 3
+
+
 def create_workers():
     for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=calculateTF_IDF)
@@ -60,7 +62,25 @@ def processQuery(topKResults, query):
     queue.join()
     end = timer()
     print('Elapsed time : ' + str(end - start))
+    topk = Query.returnTopKResults(TOP_K_RESULTS)
+    print(topk)
+
+
+processQuery(10, "geeks for geeks")
+
+
+def feedBAckquery(query, topKResults):
+    TOP_K_RESULTS = topKResults
+    QUERY = query
+    start = timer()
+    Query(QUERY)
+    relevantDocuments = Query.unInvertIndex()
+    if relevantDocuments.__len__() == 0:
+        print("No Documents have the query!")
+        os._exit(1)
+    create_jobs()
+    create_workers()
+    queue.join()
+    end = timer()
+    print('Elapsed time : ' + str(end - start))
     return Query.returnTopKResults(TOP_K_RESULTS)
-
-
-processQuery(10, "python stack developer stack")
