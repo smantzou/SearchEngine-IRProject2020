@@ -27,7 +27,14 @@ class Query:
     here it calculated the TI-IDF value of quarry"""
 
     def __init__(self, query):
-        # self.boot(query)
+        if query.__class__ is list:
+            self.boot(query)
+        else:
+            Query.relDoc = Query.findRelevantDocuments(query)
+            Query.unInvertedIndex = Query.unInvertIndex()
+
+    @staticmethod
+    def boot(query):
         Query.query = query
         Query.stopwords = set(stopwords.words('english'))
         Query.index_dict = file_to_dict('Indexer/invertedIndex.pkl')
@@ -36,8 +43,6 @@ class Query:
         Query.positionDict = file_to_dict('Indexer/position_dict.pkl')
         Query.N = Query.freq_dict.__len__()
         Query.query_TF_IDF_Dict = Query.Query_TF_IDF()
-        Query.relDoc = Query.findRelevantDocuments(Query.query_TF_IDF_Dict)
-        Query.unInvertedIndex = Query.unInvertIndex()
 
     """This static method returns a part of inverted index only with these words tha query has """
 
@@ -187,15 +192,14 @@ class Query:
         for doc in oldDict.keys():
             for word in oldDict.get(doc):
                 if newDict.get(word) is None:
-                    newDict.update({word: word.values() * parameter})
+                    newDict.update({word: oldDict.get(doc).get(word) * parameter})
                 else:
-                    oldTF = word.values()
-                    new = newDict.get(doc).get(word)
-                    newDict.get(doc).update({word: (oldTF + new) * parameter})
+                    oldTF = oldDict.get(doc).get(word)
+                    new = newDict.get(word)
+                    newDict.update({word: (oldTF + new) * parameter})
 
-        for doc in oldDict:
-            for word in newDict.get(doc):
-                newDict.update({word: word.values() / size})
+        for word in newDict.keys():
+            newDict.update({word: newDict.get(word) / size})
         return newDict
         # query=set(Query.query)
         # wordsINquery = np.array(query)
@@ -250,7 +254,7 @@ class Query:
         topKDict = dict()
         i = 0
         for key in Query.documentCosSim.keys():
-            topKDict.update({i+1: key})
+            topKDict.update({i + 1: key})
             i += 1
             if i is k:
                 break

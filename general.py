@@ -1,11 +1,9 @@
 import os
 import pickle
-
-# Each website you crawl is a separate project
 import shutil
 from tld import get_tld
 
-
+"""create dire """
 def create_project_dir(directory):
     if not os.path.exists(directory):
         print("Creating project " + directory)

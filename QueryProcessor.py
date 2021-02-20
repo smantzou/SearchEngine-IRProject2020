@@ -64,26 +64,3 @@ def processQuery(topKResults, query):
 
 
 processQuery(10, "python stack developer stack")
-
-#
-# if __name__ == '__main__':
-#     TOP_K_RESULTS = int(sys.argv[1])
-#     NUMBER_OF_THREADS = int(sys.argv[2])
-#     # NUMBER_OF_THREADS= numberOfThreads()
-#     print(NUMBER_OF_THREADS, "number of threads")
-#     QUERY = sys.argv[3:]
-#     start = timer()
-#     queue = Queue()
-#     QUERY = stemQuery(QUERY)
-#     Query(QUERY)
-#     relevantDocuments = Query.unInvertIndex()
-#     if relevantDocuments.__len__() == 0:
-#         print("No Documents have the query!")
-#         os._exit(1)
-#     create_jobs()
-#     create_workers()
-#     queue.join()
-#
-#     Query.returnTopKResults(TOP_K_RESULTS)
-#     end = timer()
-#     print('Elapsed time : ' + str(end - start))

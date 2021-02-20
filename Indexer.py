@@ -34,8 +34,8 @@ if __name__ == '__main__':
     create_project_dir(PROJECT_NAME)
     create_index_files(PROJECT_NAME)
     INDEX_FILE = PROJECT_NAME + 'invertedIndex.pkl'
-    MAX_NUMBER_OF_INDEXES = int(sys.argv[1])
-    keep_old_files = sys.argv[2]
+    MAX_NUMBER_OF_INDEXES = (sys.argv[1])
+    keep_old_files = bool(int(sys.argv[2]))
     NUMBER_OF_THREADS = int(sys.argv[3])
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
