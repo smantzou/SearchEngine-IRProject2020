@@ -55,22 +55,29 @@ function toggle(){
 }
 
 function sendFeedback(){
-    feedbackArray = new Array(index)
-    for(i=0;i<index;i++){
-        btn = document.getElementById(i+1)
+    feedbackDict = []
+    for(i=1;i<=index;i++){
+        let btn = document.getElementById(i)
+        let tag = document.getElementById(i+100)
         if(btn.classList.contains('active')){
-            feedbackArray[i] = 1
+            feedbackDict.push({
+                key : tag.href,
+                value : 1
+            })
         }
         else{
-            feedbackArray[i] = 0
+           feedbackDict.push({
+                key : tag.href,
+                value : 0 
+           })
         }
     }
-    console.log(feedbackArray)
-    eel.receiveFeedback(feedbackArray)
+    console.log(feedbackDict)
+    eel.receiveFeedback(feedbackDict)
 }
 
 eel.expose(receiveResults)
-function receiveResults(results) {
+function receiveResults(results,titles) {
     k = Object.keys(results).length
     while (resultsContainer.firstChild) {
         resultsContainer.removeChild(resultsContainer.firstChild)
@@ -78,27 +85,24 @@ function receiveResults(results) {
     for (let i = 1; i <= k; i++) {
         const newRow = document.createElement('div')
         const newTitle = document.createElement('div')
-        const newDescription = document.createElement('div')
         const newLikeButton = document.createElement('button')
 
         newRow.classList.add = "container-fluid"
 
         const aTag = document.createElement('a')
-        aTag.innerHTML = "This is where the title should be"
+        aTag.innerHTML = titles[i]
 
         aTag.href = results[i]
+        aTag.id = i+100
         aTag.target = "_blank"
-        const aSpan = document.createElement('span')
-        aSpan.innerHTML = "This is where the description should be"
+        
 
         newLikeButton.innerHTML = '&#10003;'
         newLikeButton.id = i
         newLikeButton.addEventListener("click",toggle)
 
         newTitle.appendChild(aTag)
-        newDescription.appendChild(aSpan)
         newRow.appendChild(newTitle)
-        newRow.appendChild(newDescription)
         newRow.appendChild(newLikeButton)
 
 

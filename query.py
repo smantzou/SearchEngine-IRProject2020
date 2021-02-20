@@ -167,7 +167,7 @@ class Query:
             query.update({word: query.get(word) * aParameter})
         alist = []
         for documents in pageFeedback:
-            if documents.value() == 1:
+            if pageFeedback.get(documents) == 1:
                 alist.append(documents)
 
         for a in alist:

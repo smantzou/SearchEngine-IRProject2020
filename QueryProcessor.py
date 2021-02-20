@@ -62,14 +62,10 @@ def processQuery(topKResults, query):
     queue.join()
     end = timer()
     print('Elapsed time : ' + str(end - start))
-    topk = Query.returnTopKResults(TOP_K_RESULTS)
-    print(topk)
+    return Query.returnTopKResults(TOP_K_RESULTS)
 
 
-processQuery(10, "geeks for geeks")
-
-
-def feedBAckquery(query, topKResults):
+def feedBackQuery(query, topKResults):
     TOP_K_RESULTS = topKResults
     QUERY = query
     start = timer()
