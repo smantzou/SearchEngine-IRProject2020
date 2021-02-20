@@ -137,12 +137,14 @@ class Query:
     def returnTopKResults(k):
         Query.documentCosSim = {k: v for k, v in
                                 sorted(Query.documentCosSim.items(), key=lambda item: item[1], reverse=True)}
+        topKDict = dict()
         i = 0
         for key in Query.documentCosSim.keys():
-            print(key, Query.documentCosSim.get(key))
+            topKDict.update({i+1: key})
             i += 1
             if i is k:
                 break
+        return topKDict
 
     @staticmethod
     def printCosSimDict():

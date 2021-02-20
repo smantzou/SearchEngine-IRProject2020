@@ -5,6 +5,9 @@ from query import *
 from stemmer import stemQuery
 from timeit import default_timer as timer
 
+NUMBER_OF_THREADS = 4
+
+
 def create_workers():
     for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=calculateTF_IDF)
@@ -24,14 +27,15 @@ def create_jobs():
         queue.put(relDoc)
 
 
-if __name__ == '__main__':
-    TOP_K_RESULTS = int(sys.argv[1])
-    NUMBER_OF_THREADS = int(sys.argv[2])
-    QUERY = sys.argv[3:]
+def processQuery(topKResults, query):
+    TOP_K_RESULTS = topKResults
+    QUERY = query
     start = timer()
+    global queue
     queue = Queue()
     QUERY = stemQuery(QUERY)
     Query(QUERY)
+    global relevantDocuments
     relevantDocuments = Query.unInvertIndex()
     if relevantDocuments.__len__() == 0:
         print("No Documents have the query!")
@@ -39,11 +43,26 @@ if __name__ == '__main__':
     create_jobs()
     create_workers()
     queue.join()
-    Query.returnTopKResults(TOP_K_RESULTS)
     end = timer()
     print('Elapsed time : ' + str(end - start))
+    return Query.returnTopKResults(TOP_K_RESULTS)
 
-# WE HAVE THE UNINVERTED INDEX
-# MAKE THREADS FIND THE TF IDF OF EVERY URL
-# THEN MAKE THREADS FIND THE COS SIM OF EVERY URL
-# SORT AND PRINT THE TOP K
+
+# if __name__ == '__main__':
+#     TOP_K_RESULTS = int(sys.argv[1])
+#     NUMBER_OF_THREADS = int(sys.argv[2])
+#     QUERY = sys.argv[3:]
+#     start = timer()
+#     queue = Queue()
+#     QUERY = stemQuery(QUERY)
+#     Query(QUERY)
+#     relevantDocuments = Query.unInvertIndex()
+#     if relevantDocuments.__len__() == 0:
+#         print("No Documents have the query!")
+#         os._exit(1)
+#     create_jobs()
+#     create_workers()
+#     queue.join()
+#     Query.returnTopKResults(TOP_K_RESULTS)
+#     end = timer()
+#     print('Elapsed time : ' + str(end - start))

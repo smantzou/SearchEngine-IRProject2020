@@ -26,6 +26,7 @@ class Index:
     def indexPage(page, threadName):
         print(threadName + " |Indexing page " + str(page[0]))
         urlDict = stemPage(page, Index.stopwords)  # stem the page
+        print(urlDict)
         if urlDict.values().__len__() == 0:
             return 0
         Index.updateIndex(urlDict)  # update the invertedIndex
