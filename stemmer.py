@@ -33,15 +33,20 @@ def stemPage(page, stopWords):
             if not isEnglish(word):
                 continue
         stemSentence.append(porter.stem(word))
+    # return an empty dictionary if no words exist in page
     if stemSentence.__len__() == 0:
         print(url, " has no words")
         return dict()
     return makeUrlDict(url, stemSentence)
 
 
+"""This function create a url Dictionary  """
+
+
 def makeUrlDict(url, stemSentence):
-    url_dict = dict()
     word_dict = dict()
+    listOfwords = []
+    """Here we create the word dictionary with values number of appearances """
     for stemmedToken in stemSentence:
         if stemmedToken not in word_dict.keys():
             word_dict.update({stemmedToken: 1})
@@ -50,6 +55,8 @@ def makeUrlDict(url, stemSentence):
             word_dict.pop(stemmedToken)
             num_of_app += 1
             word_dict.update({stemmedToken: num_of_app})
+
+    # from dict to array to dict again
     array = np.array(list(word_dict.values()))
     count_dict.update({url: array})
     values = word_dict.values()
@@ -58,10 +65,20 @@ def makeUrlDict(url, stemSentence):
     else:
         maxF = max(values)
         freq_dict.update({url: maxF})
-    url_dict.update({url: {}})
     v = word_dict
-    url_dict[url] = v
-    return url_dict
+    return v
+
+
+def makePositionDict(wordDict):
+    print(wordDict)
+    arrayOfwords = np.array(list(wordDict.keys()))
+    partialDict = dict()
+    for i in range(len(arrayOfwords)):
+        # atuple = (i, wordDict.get(arrayOfwords[i]))
+        partialDict.update({arrayOfwords[i]: wordDict.get(arrayOfwords[i])})
+    # for word in arrayOfwords:
+    #     partialDict.update()
+    return partialDict
 
 
 def return_freq():

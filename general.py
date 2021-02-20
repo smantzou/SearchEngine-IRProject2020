@@ -23,13 +23,16 @@ def write_file(path, data):
 def create_index_files(project):
     freqDict = project + '/freq_dictionary.pkl'
     tempIndex = project + '/invertedIndex.pkl'
-    countdict = project + '/countDict.pkl'
+    countDict = project + '/countDict.pkl'
+    position = project + '/position_dict.pkl'
     if not os.path.isfile(tempIndex):
         write_file(tempIndex, '')
     if not os.path.isfile(freqDict):
         write_file(freqDict, '')
-    if not os.path.isfile(countdict):
-        write_file(countdict, '')
+    if not os.path.isfile(countDict):
+        write_file(countDict, '')
+    if not os.path.isfile(position):
+        write_file(position, '')
 
 
 # Create queue and crawled files
@@ -38,13 +41,15 @@ def create_data_files(project_name, base_url):
     queue = project_name + '/queue.txt'
     crawled = project_name + '/crawled.txt'
     dictionary = project_name + '/dictionary.pkl'
+    titles = project_name + '/titles.pkl'
     if not os.path.isfile(queue):
         write_file(queue, base_url)
     if not os.path.isfile(crawled):
         write_file(crawled, '')
     if not os.path.isfile(dictionary):
         write_file(dictionary, '')
-
+    if not os.path.isfile(titles):
+        write_file(titles, '')
 
 # Delete all previous entries in the crawler folder
 def delete_data_files(project_name):
@@ -69,7 +74,7 @@ def delete_file_contents(path):
 
 # Read a file and convert each line to set item
 
-def file_to_set(file_name):
+def file_to_set(file_name) -> set:
     results = set()
     with open(file_name, 'rt', encoding="UTF-8", errors="ignore") as f:
         for line in f:

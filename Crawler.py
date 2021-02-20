@@ -7,30 +7,53 @@ from general import *
 import sys
 import os
 import time
+import numpy
 
 
 #  create a worker set(will die with main)
+
 def create_workers():
+    array = jobsPerThread(MAX_NUMBER_OF_CRAWLS)
     for n in range(NUMBER_OF_THREADS):
-        t = threading.Thread(target=pre_work)
+        t = threading.Thread(target=pre_work, args=(array[n],))
         t.daemon = True
         t.start()
 
 
-def pre_work():
-    work()
+
+def jobsPerThread(crawls):
+    jobs = crawls % NUMBER_OF_THREADS
+    moreJobs = numpy.zeros(shape=NUMBER_OF_THREADS, dtype=int)
+    if jobs != 0:
+        i = 0
+        while jobs != 0:
+            print(jobs)
+            moreJobs[i] += 1
+            jobs = jobs - 1
+            i += 1
+    arrayOfJobs = numpy.full(shape=NUMBER_OF_THREADS, fill_value=jobs_per_thread)
+    arrayOfJobs = arrayOfJobs + moreJobs
+    print(arrayOfJobs, "the final jobs per thread")
+    return arrayOfJobs
+
+
+def pre_work(k):
+
+    work(k)
+
+    print(Spider.dictCount, " number of not crawled pages ")
     time.sleep(5)
     os._exit(0)
 
 
 # do the next job in the queue
 
-def work(i=0):
-    while i < jobs_per_thread:
+
+def work(k):
+    for i in range(k):
         url = fifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
         fifo_queue.task_done()
-        i += 1
 
 
 # each queued link is a new job
@@ -58,12 +81,13 @@ if __name__ == '__main__':
     QUEUE_FILE = PROJECT_NAME + '/queue.txt'
     CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
     DICT_FILE = PROJECT_NAME + '/dictionary.pkl'
+    TITLE_DICT = PROJECT_NAME + '/titleDict.pkl'
     NUMBER_OF_THREADS = int(sys.argv[4])
-    MAX_NUMBER_OF_CRAWLS = int(sys.argv[2])
+    MAX_NUMBER_OF_CRAWLS = int(sys.argv[2]) - 1
     keep_old_files = bool(int(sys.argv[3]))
     if keep_old_files is False:
         delete_data_files(PROJECT_NAME)
-    jobs_per_thread = MAX_NUMBER_OF_CRAWLS / NUMBER_OF_THREADS
+    jobs_per_thread = MAX_NUMBER_OF_CRAWLS //NUMBER_OF_THREADS
     fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()

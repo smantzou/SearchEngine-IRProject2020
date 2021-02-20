@@ -11,11 +11,13 @@ class LinkFinder:
         self.page_url = page_url
         self.links = set()
 
+
     def handle_starttag(self, html_string):
         soup = BeautifulSoup(html_string, 'lxml')
         for a in soup.find_all('a', href=True):
             if isAllowed(parse.urljoin(self.base_url, a['href'])):
                 self.links.add(parse.urljoin(self.base_url, a['href']))
+
 
     def return_url_text(self, html_string):
         soup = BeautifulSoup(html_string, 'lxml')
@@ -30,3 +32,4 @@ class LinkFinder:
 
     def page_links(self):
         return self.links
+
