@@ -160,15 +160,14 @@ class Query:
         positiveDictionary = dict()
         likedTf = dict()
         notLiketf = dict()
-        negativeDectionary = dict()
+        negativeDictionary = dict()
         theNewQuery = dict()
         query = Query.query_TF_IDF_Dict
         for word in query:
             query.update({word: query.get(word) * aParameter})
         alist = []
         for documents in pageFeedback:
-            if pageFeedback.get(documents) == 1:
-                alist.append(documents)
+            alist.append(documents)
 
         for a in alist:
             wordDict = Query.calculateTFofdocument(a, False)
@@ -180,8 +179,8 @@ class Query:
         likedDocuments = len(likedTf.keys())
         notLikedDocuments = len(notLiketf.keys())
         # add the liked pages
-        positiveDictionary = Query.dictoparetor(likedTf, positiveDictionary, likedDocuments, bParameter)
-        negativeDictionary = Query.dictoparetor(notLiketf, negativeDectionary, notLikedDocuments, gParameter)
+        positiveDictionary = Query.dictOperator(likedTf, positiveDictionary, likedDocuments, bParameter)
+        negativeDictionary = Query.dictOperator(notLiketf, negativeDictionary, notLikedDocuments, gParameter)
 
         for word in negativeDictionary.keys():
             if positiveDictionary.get(word) is None:
@@ -193,7 +192,7 @@ class Query:
         return theNewQuery
 
     @staticmethod
-    def dictoparetor(oldDict, newDict, size, parameter):
+    def dictOperator(oldDict, newDict, size, parameter):
         for doc in oldDict.keys():
             for word in oldDict.get(doc):
                 if newDict.get(word) is None:

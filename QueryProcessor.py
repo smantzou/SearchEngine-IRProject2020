@@ -66,6 +66,7 @@ def processQuery(topKResults, query):
 
 
 def feedBackQuery(query, topKResults):
+    query = Query.feedback(query)
     TOP_K_RESULTS = topKResults
     QUERY = query
     start = timer()

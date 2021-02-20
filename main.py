@@ -1,5 +1,5 @@
 import eel
-from QueryProcessor import processQuery
+from QueryProcessor import processQuery, feedBackQuery
 from general import file_to_dict
 
 eel.init("static")
@@ -17,7 +17,9 @@ def receiveFeedback(feedBackDict):
     urlFeedBack = dict()
     for feed in feedBackDict:
         urlFeedBack.update({feed['key']: feed['value']})
-    print(urlFeedBack)
+    newTopK = feedBackQuery(urlFeedBack, urlFeedBack.__len__())
+    newTitle = returnTitles(newTopK)
+    eel.receiveResults(newTopK, newTitle)
 
 
 def returnTitles(urlDict):
