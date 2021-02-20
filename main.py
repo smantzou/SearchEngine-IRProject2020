@@ -9,7 +9,6 @@ eel.init("static")
 def getQueryInfo(topKResults, query):
     topKDict, query_time = processQuery(topKResults, query.split(" "))
     titleDict = returnTitles(topKDict)
-    print(query_time)
     eel.receiveResults(topKDict, titleDict, query_time)
 
 
@@ -20,7 +19,6 @@ def receiveFeedback(feedBackDict):
         urlFeedBack.update({feed['key']: feed['value']})
     newTopK, query_time = feedBackQuery(urlFeedBack, urlFeedBack.__len__())
     newTitle = returnTitles(newTopK)
-    print(query_time)
     eel.receiveResults(newTopK, newTitle, query_time)
 
 
