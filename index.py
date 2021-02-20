@@ -26,19 +26,23 @@ class Index:
     @staticmethod
     def indexPage(page, threadName):
         print(threadName + " |Indexing page " + str(page[0]))
+
+        urlDict = stemPage(page, Index.stopwords)  # stem the page
+        print(urlDict)
+
         wordDict = stemPage(page, Index.stopwords)
         urlDict = dict()
         urlDict.update({page[0]: {}})
         urlDict[page[0]] = wordDict
         positionDict = wordDict
         # positionDict = makePositionDict(wordDict)
+
         if urlDict.values().__len__() == 0:
             return 0
         Index.updatePosition(page[0], positionDict)
         Index.updateIndex(urlDict)  # update the invertedIndex
         Index.updateCounter()
         Index.updateFrequency()
-
 
     """In this method we update-create the inverted index with urlDict, from pages to words and number of appearances"""
 
@@ -86,6 +90,7 @@ class Index:
         dict_to_file(Index.position_dict, "Indexer/position_dict.pkl")
 
     """In this method we update the position Dictionary with the already made position dictionary"""
+
     @staticmethod
     def updatePosition(page, positions):
         Index.lock.acquire()
@@ -93,5 +98,3 @@ class Index:
             Index.position_dict.update({page: positions})
         finally:
             Index.lock.release()
-
-

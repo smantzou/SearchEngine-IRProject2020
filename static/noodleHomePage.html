@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <title>
+        noodle
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="./noodleHomePage.css">
+    <script type="text/javascript"
+        src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=UnOgzitm0lsI_iex4PaJJchxd8JAp3zh9OYn6KBdt6l4gB6mEsMPmu_8cZEms1B3lzPy8iJ7Ae2MWG6xju1TNvFu0KT6nzqaMxJrZM_YCb6dq5Lxb3BTaIgSpAFeKdBSwJB0YEzLN0YcyBNjD3JAcx4ILVEnIBJKLnYNX8r-S_I"
+        charset="UTF-8"></script>
+</head>
+
+<body>
+    <div class="text-center">
+        <img class="resize" src="images/noodlephoto.jpg" alt="A photo of noodles on a chopstick">
+    </div>
+    <br>
+    <div id="span-div" class="input-group flex-nowrap container-fluid">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-wrapping">&#x1F50D</span>
+        </div>
+        <input id="queryInput" type="text" class="form-control"
+            placeholder="Write your query to untangle the noodles..." aria-label="Username"
+            aria-describedby="addon-wrapping">
+        <button id="queryButton" class="bg-primary text-light">Search</button>
+        <div class="myContainer container">
+            <span class="next" onclick="nextNum()"></span>
+            <span class="prev" onclick="prevNum()"></span>
+            <div id="box">
+                <span>0</span>
+            </div>
+        </div>
+        <div id="textDiv">
+            <span id="numberOfResults"> Number of Results</span>
+        </div>
+        <div>
+            <button class="btn-primary" id="feedbackButton">Send Feedback</button>
+        </div>
+    </div>
+    <div class="container-fluid" id="resultsContainer"></div>
+    <script src="/eel.js"></script>
+    
+
+
+
+
+</body>
+<script type="text/javascript" src="./noodleHomePage.js"></script>
+<script type="text/javascript" src="./numberInputSpinner.js"></script>
+
+</html>
