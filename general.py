@@ -3,16 +3,13 @@ import pickle
 import shutil
 from tld import get_tld
 
-"""create dir """
-
 
 def create_project_dir(directory):
+    """Creation of directory"""
     if not os.path.exists(directory):
         print("Creating project " + directory)
         os.makedirs(directory)
 
-
-# Creates new file
 
 def write_file(path, data):
     f = open(path, 'w')
@@ -21,23 +18,17 @@ def write_file(path, data):
 
 
 def create_index_files(project):
-    freqDict = project + '/freq_dictionary.pkl'
+    """Creation of files in Indexer directory for indexing"""
     tempIndex = project + '/invertedIndex.pkl'
-    countDict = project + '/countDict.pkl'
     position = project + '/position_dict.pkl'
     if not os.path.isfile(tempIndex):
         write_file(tempIndex, '')
-    if not os.path.isfile(freqDict):
-        write_file(freqDict, '')
-    if not os.path.isfile(countDict):
-        write_file(countDict, '')
     if not os.path.isfile(position):
         write_file(position, '')
 
 
-# Create queue and crawled files
-
 def create_data_files(project_name, base_url):
+    """creation of crawler files in crawler directory"""
     queue = project_name + '/queue.txt'
     crawled = project_name + '/crawled.txt'
     dictionary = project_name + '/dictionary.pkl'
@@ -52,30 +43,27 @@ def create_data_files(project_name, base_url):
         write_file(titles, '')
 
 
-# Delete all previous entries in the crawler folder
 def delete_data_files(project_name):
+    """Delete all previous entries in the folder"""
     if os.path.isdir(project_name):
         shutil.rmtree(project_name)
 
 
-# Add data onto an existing file
-
 def append_to_file(path, data):
+    """Add data onto an existing file"""
     with open(path, 'a', encoding="utf-8", errors="ignore") as file:
         file.write(data)
         file.write("\n")
 
 
-# Delete the contents of a file
-
 def delete_file_contents(path):
+    """Delete the contents of a file"""
     with open(path, 'w'):
         pass
 
 
-# Read a file and convert each line to set item
-
 def file_to_set(file_name) -> set:
+    """Read a file and convert each line to set item"""
     results = set()
     with open(file_name, 'rt', encoding="UTF-8", errors="ignore") as f:
         for line in f:
@@ -83,10 +71,8 @@ def file_to_set(file_name) -> set:
         return results
 
 
-# Iterate through a set , each item will be a new line in the file
-
-
 def set_to_file(links, file):
+    """Iterate through a set , each item will be a new line in the file"""
     delete_file_contents(file)
     for link in sorted(links):
         res = get_tld(link, as_object=True, fail_silently=True)
@@ -95,14 +81,15 @@ def set_to_file(links, file):
                 append_to_file(file, link)
 
 
-# Dumps the dictionary of text into file (using pickle)
 def dict_to_file(textDict, file):
+    """Dumps the dictionary of text into file (using pickle)"""
     with open(file, 'wb') as file:
         pickle.dump(textDict, file)
         file.close()
 
 
 def file_to_dict(file):
+    """From file to dict"""
     if os.path.getsize(file) > 0:
         with open(file, 'rb') as file:
             new_dict = pickle.load(file)
@@ -113,6 +100,7 @@ def file_to_dict(file):
 
 
 def isEnglish(s):
+    """check if text in page is English"""
     try:
         s.encode(encoding='utf-8').decode('ascii')
     except UnicodeDecodeError:

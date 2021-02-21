@@ -9,9 +9,8 @@ import time
 import numpy
 
 
-#  create a worker set(will die with main)
-
 def create_workers():
+    """In this function we create the threads, threads are focus on pre_work function with the parameter of jobs"""
     array = jobsPerThread(MAX_NUMBER_OF_CRAWLS)
     for n in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=pre_work, args=(array[n],))
@@ -20,6 +19,7 @@ def create_workers():
 
 
 def jobsPerThread(crawls):
+    """This function returns an array with number of gobs that every thread separately must do """
     jobs = crawls % NUMBER_OF_THREADS
     moreJobs = numpy.zeros(shape=NUMBER_OF_THREADS, dtype=int)
     if jobs != 0:
@@ -36,35 +36,45 @@ def jobsPerThread(crawls):
 
 
 def pre_work(k):
+    """The first and the last function that threads saw"""
     work(k)
-
-    print(Spider.dictCount, " number of not crawled pages ")
     time.sleep(5)
     os._exit(0)
 
 
-# do the next job in the queue
-
-
 def work(k):
+    """Here the threads do the main job, threads gets on url page from queue,
+     after crawl the page and remove it from queue"""
     for i in range(k):
         url = fifo_queue.get()
         Spider.crawl_page(threading.Thread().name, url)
         fifo_queue.task_done()
 
 
-# each queued link is a new job
-
-
 def create_jobs():
+    """This function update the fifo_queue with the next pages that will be crawled """
     for link in file_to_set(QUEUE_FILE):
         fifo_queue.put(link)
     fifo_queue.join()
     crawl()
 
+#
+# def create_jobs_best():
+#     i = 0
+#     queue_links = file_to_set(QUEUE_FILE)
+#     while i < MAX_NUMBER_OF_CRAWLS and len(queue_links) > 0:
+#         print(i,"i am hereeeeeeee")
+#         queue_links = file_to_set(QUEUE_FILE)
+#         print(str(len(queue_links)) + 'links in the queue')
+#         for link in file_to_set(QUEUE_FILE):
+#             fifo_queue.put(link)
+#             i += 1
+#         fifo_queue.join()
 
-# check if there are items in the queue, if so crawl them
+
+
 def crawl():
+    """If queue_links file has pages then update then fifo_queue"""
     queue_links = file_to_set(QUEUE_FILE)
     if len(queue_links) > 0:
         print(str(len(queue_links)) + 'links in the queue')
@@ -72,6 +82,10 @@ def crawl():
 
 
 if __name__ == '__main__':
+    """The main takes as arguments from command line,with this order:
+    the link of first page that we will crawl-> string, the number of crawls that user wants->int,
+     keep or not old files-> int(0,1), number of threads to use -> int. Here we create the directory of files.
+     terminal must be like: crawler https://www.geeksforgeeks.org/ 100 1 4 """
     PROJECT_NAME = 'Crawler'
     HOMEPAGE = sys.argv[1]
     DOMAIN_NAME = get_domain_name(HOMEPAGE)
@@ -88,8 +102,5 @@ if __name__ == '__main__':
     fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
-    crawl()
-
-# TO DO FOR NEXT TIME
-# SOLVE THE PROBLEM OF THE HEURISTIC ALG APPROACH TO CRAWLING
-# QUERY PROCESSOR MULTITHREADING BEGIN
+    # crawl()
+    create_jobs_best()
