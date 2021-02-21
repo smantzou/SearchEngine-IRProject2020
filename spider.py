@@ -1,8 +1,6 @@
 from urllib.request import urlopen
 from urllib import parse
-
 from bs4 import BeautifulSoup
-
 from textItem import *
 from link_finder import LinkFinder
 from general import *
@@ -69,7 +67,6 @@ class Spider:
 
     @staticmethod
     def gather_links(page_url):
-        html_string = ''
         try:
             response = urlopen(page_url)
             if response.getheader('Content-Type').split('/')[0] in Spider.bannedResponses:

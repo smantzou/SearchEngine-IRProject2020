@@ -1,6 +1,5 @@
 import threading
 from queue import Queue
-import queue
 from spider import Spider
 from domain import *
 from general import *

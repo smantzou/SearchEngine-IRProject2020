@@ -2,3 +2,6 @@ Crawler
 Indexer
 testo.py
 testcrawler.py
+.idea
+__pychache__/
+venv/

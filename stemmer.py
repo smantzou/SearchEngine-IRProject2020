@@ -28,7 +28,11 @@ def stemPage(page, stopWords):
                 continue
             if isDecimal(word):
                 continue
-            word = num2words(word)
+            try:
+                word = num2words(word)
+            except Exception:
+                print("Num2Words Decimal Exception")
+                continue
         else:
             if not isEnglish(word):
                 continue

@@ -3,7 +3,9 @@ import pickle
 import shutil
 from tld import get_tld
 
-"""create dire """
+"""create dir """
+
+
 def create_project_dir(directory):
     if not os.path.exists(directory):
         print("Creating project " + directory)
@@ -48,6 +50,7 @@ def create_data_files(project_name, base_url):
         write_file(dictionary, '')
     if not os.path.isfile(titles):
         write_file(titles, '')
+
 
 # Delete all previous entries in the crawler folder
 def delete_data_files(project_name):
