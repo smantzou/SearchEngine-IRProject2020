@@ -8,7 +8,7 @@ import multiprocessing
 
 """ This function create threads-workers that will be used later"""
 
-NUMBER_OF_THREADS = multiprocessing.cpu_count() - 3
+NUMBER_OF_THREADS = multiprocessing.cpu_count() // 2
 
 
 def create_workers():
@@ -25,7 +25,7 @@ The threads stop when the queue is empty"""
 def calculateTF_IDF():
     while not queue.empty():
         document = queue.get()
-        Query.calculateTFofdocument(document, True)
+        Query.calculate_tf(document, True)
         queue.task_done()
 
 
@@ -53,7 +53,7 @@ def processQuery(topKResults, query):
     QUERY = stemQuery(QUERY)
     Query(QUERY)
     global relevantDocuments
-    relevantDocuments = Query.unInvertIndex()
+    relevantDocuments = Query.un_invert()
     if relevantDocuments.__len__() == 0:
         print("No Documents have the query!")
         os._exit(1)
@@ -71,7 +71,7 @@ def feedBackQuery(query, topKResults):
     QUERY = query
     start = timer()
     Query(QUERY)
-    relevantDocuments = Query.unInvertIndex()
+    relevantDocuments = Query.un_invert()
     if relevantDocuments.__len__() == 0:
         print("No Documents have the query!")
         os._exit(1)

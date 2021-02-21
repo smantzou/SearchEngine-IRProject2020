@@ -1,17 +1,15 @@
 import string
-import numpy as np
 from nltk.corpus import stopwords
-
 from general import *
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 from num2words import num2words
 
-freq_dict = dict()
-count_dict = dict()
-
 
 def stemPage(page, stopWords):
+    """This function is responsible for stemming every token that we have received from a page,
+    returns a list with stemmed words, no stopwords, numbers has been converted to words """
+
     porter = PorterStemmer()
     text = page[1]
     url = page[0]
@@ -40,10 +38,9 @@ def stemPage(page, stopWords):
     return makeUrlDict(url, stemSentence)
 
 
-"""This function create a url Dictionary  """
-
-
 def makeUrlDict(url, stemSentence):
+    """This function create and returns a word dictionary, from words to number of appearances """
+
     word_dict = dict()
     """Here we create the word dictionary with values number of appearances """
     for stemmedToken in stemSentence:
@@ -54,26 +51,10 @@ def makeUrlDict(url, stemSentence):
             word_dict.pop(stemmedToken)
             num_of_app += 1
             word_dict.update({stemmedToken: num_of_app})
-
-    # from dict to array to dict again
-    array = np.array(list(word_dict.values()))
-    count_dict.update({url: array})
-    values = word_dict.values()
-    if values.__len__() == 0:
-        freq_dict.update({url: 0})
-    else:
-        maxF = max(values)
-        freq_dict.update({url: maxF})
     v = word_dict
     return v
 
 
-def return_freq():
-    return freq_dict
-
-
-def return_count_dict():
-    return count_dict
 
 
 def isDecimal(s):
@@ -85,6 +66,7 @@ def isDecimal(s):
 
 
 def stemQuery(query):
+    """The query first pass from here """
     porter = PorterStemmer()
     sentence = ' '.join(query)
     sentence = sentence.lower()

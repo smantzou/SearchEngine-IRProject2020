@@ -1,22 +1,17 @@
-import math
 import threading
 import numpy as np
 from nltk.corpus import stopwords
 from numpy.linalg import norm
-import multiprocessing
 from general import *
-import os
 
 """This class is responsible for calculating the similarity of the documents with the query"""
 
 
 class Query:
     index_dict = dict()
-    count_dict = dict()
-    freq_dict = dict()
     stopwords = set()
     relDoc = dict()
-    lock = multiprocessing.Lock()
+    lock = threading.Lock()
     query = []
     query_TF_IDF_Dict = dict()
     documentCosSim = dict()
@@ -30,8 +25,8 @@ class Query:
         if query.__class__ is list:
             self.boot(query)
         else:
-            Query.relDoc = Query.findRelevantDocuments(query)
-            Query.unInvertedIndex = Query.unInvertIndex()
+            Query.relDoc = Query.find_relevant_documents(query)
+            Query.unInvertedIndex = Query.un_invert()
             Query.query_TF_IDF_Dict = query  # the query is already in tf terms
 
     @staticmethod
@@ -39,21 +34,19 @@ class Query:
         Query.query = query
         Query.stopwords = set(stopwords.words('english'))
         Query.index_dict = file_to_dict('Indexer/invertedIndex.pkl')
-        Query.count_dict = file_to_dict('Indexer/countDict.pkl')
-        Query.freq_dict = file_to_dict('Indexer/freq_dictionary.pkl')
         Query.positionDict = file_to_dict('Indexer/position_dict.pkl')
-        Query.N = Query.freq_dict.__len__()
+        Query.N = Query.positionDict.__len__()
         if Query.N == 0:
             print("nothing in inverted index ")
 
-        Query.query_TF_IDF_Dict = Query.Query_TF_IDF()
-        Query.relDoc = Query.findRelevantDocuments(Query.query_TF_IDF_Dict)
-        Query.unInvertedIndex = Query.unInvertIndex()
+        Query.query_TF_IDF_Dict = Query.query_tf_idf()
+        Query.relDoc = Query.find_relevant_documents(Query.query_TF_IDF_Dict)
+        Query.unInvertedIndex = Query.un_invert()
 
     """This static method returns a part of inverted index only with these words tha query has """
 
     @staticmethod
-    def findRelevantDocuments(queryDocument):
+    def find_relevant_documents(queryDocument):
         doc_dict = dict()
         for q in queryDocument.keys():
             word_dict = Query.index_dict.get(q)
@@ -66,24 +59,21 @@ class Query:
     for every word"""
 
     @staticmethod
-    def Query_TF_IDF():
+    def query_tf_idf():
         queryDict = dict()
         Query.query = np.array(Query.query)
         freq = []
         for word in Query.query:
             times = np.where(Query.query == word)
             freq.append(len(times[0]))
-        tfIdfList = list()
-        maxTF = max(freq)
 
         for i in range(0, len(Query.query)):
-            # tf = freq[i] / maxTF
             aDict = Query.relDoc.get(Query.query[i])
             if aDict is None:
                 ni = 1
             else:
                 ni = len(aDict.keys()) + 1
-            tf = freq[i]
+            tf = freq[i]  # just tf of terms
             tf = np.log(tf) + 1
             idf = np.log(1 + (Query.N / ni))
             queryDict.update({Query.query[i]: tf * idf})
@@ -94,7 +84,7 @@ class Query:
     words-number of appearances, with this function we know all the documents-pages that is relevant with the query"""
 
     @staticmethod
-    def unInvertIndex():
+    def un_invert():
         doc_dict = dict()
         for key in Query.relDoc.keys():
             for url in Query.relDoc.get(key).keys():
@@ -107,22 +97,31 @@ class Query:
                 tuple_list.append(aTuple)
                 doc_dict[url] = tuple_list
         for url in doc_dict.keys():
-            doc_dict[url] = Query.Convert(doc_dict.get(url))
+            doc_dict[url] = Query.convert(doc_dict.get(url))
 
         return doc_dict
 
-    def Convert(tuplet):
-        di = dict(tuplet)
+    @staticmethod
+    def convert(tupleItem):
+        di = dict(tupleItem)
         return di
 
     @staticmethod
-    def calculateTFofdocument(url, flag):
+    def calculate_tf(url, flag):
+
         wordDict = Query.positionDict.get(url)
         tfDict = dict()
         for word in wordDict.keys():
             wordNum = wordDict.get(word)
-            wordNum = np.log(wordNum) + 1
-            tfDict.update({word: wordNum})
+            TF = np.log(wordNum) + 1
+            aDict = Query.relDoc.get(word)
+            if aDict is None:
+                ni = 1
+            else:
+                ni = len(aDict.keys()) + 1
+            idf = np.log(1 + (Query.N / ni))
+
+            tfDict.update({word: TF * idf})
         if flag:
             cosSim = Query.calculateCosSim(Query.query_TF_IDF_Dict, tfDict)
             Query.updateCosineDict(url, cosSim)
@@ -159,28 +158,28 @@ class Query:
         gParameter = 0.3
         positiveDictionary = dict()
         likedTf = dict()
-        notLiketf = dict()
+        notLiked = dict()
         negativeDictionary = dict()
         theNewQuery = dict()
         query = Query.query_TF_IDF_Dict
         for word in query:
             query.update({word: query.get(word) * aParameter})
-        alist = []
+        list_with_top_k = []
         for documents in pageFeedback:
-            alist.append(documents)
+            list_with_top_k.append(documents)
 
-        for a in alist:
-            wordDict = Query.calculateTFofdocument(a, False)
+        for a in list_with_top_k:
+            wordDict = Query.calculate_tf(a, False)
             if pageFeedback.get(a) == 1:
                 likedTf.update({a: wordDict})
             else:
-                notLiketf.update({a: wordDict})
+                notLiked.update({a: wordDict})
 
         likedDocuments = len(likedTf.keys())
-        notLikedDocuments = len(notLiketf.keys())
+        notLikedDocuments = len(notLiked.keys())
         # add the liked pages
-        positiveDictionary = Query.dictOperator(likedTf, positiveDictionary, likedDocuments, bParameter)
-        negativeDictionary = Query.dictOperator(notLiketf, negativeDictionary, notLikedDocuments, gParameter)
+        positiveDictionary = Query.dict_operator(likedTf, positiveDictionary, likedDocuments, bParameter)
+        negativeDictionary = Query.dict_operator(notLiked, negativeDictionary, notLikedDocuments, gParameter)
 
         for word in negativeDictionary.keys():
             if positiveDictionary.get(word) is None:
@@ -192,7 +191,7 @@ class Query:
         return theNewQuery
 
     @staticmethod
-    def dictOperator(oldDict, newDict, size, parameter):
+    def dict_operator(oldDict, newDict, size, parameter):
         for doc in oldDict.keys():
             for word in oldDict.get(doc):
                 if newDict.get(word) is None:
