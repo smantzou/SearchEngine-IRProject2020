@@ -7,6 +7,7 @@ from textItem import *
 from link_finder import LinkFinder
 from general import *
 
+
 class Spider:
     # Class variable (shared among all instances)
 

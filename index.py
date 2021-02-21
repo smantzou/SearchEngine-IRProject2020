@@ -1,7 +1,6 @@
 from stemmer import *
 from nltk.corpus import stopwords
 import threading
-import multiprocessing
 
 
 class Index:
@@ -11,12 +10,15 @@ class Index:
     position_dict = dict()
     stopwords = set()
     lock = threading.Lock()
+    PROJECT_NAME = 'Indexer'
 
     def __init__(self):
         self.boot()
 
     @staticmethod
     def boot():
+        create_project_dir(Index.PROJECT_NAME)
+        create_index_files(Index.PROJECT_NAME)
         Index.stopwords = set(stopwords.words('english'))
         Index.index_dict = file_to_dict('Indexer/invertedIndex.pkl')
         Index.count_dict = file_to_dict('Indexer/countDict.pkl')
@@ -26,20 +28,13 @@ class Index:
     @staticmethod
     def indexPage(page, threadName):
         print(threadName + " |Indexing page " + str(page[0]))
-
-        urlDict = stemPage(page, Index.stopwords)  # stem the page
-        print(urlDict)
-
-        wordDict = stemPage(page, Index.stopwords)
+        wordDict = stemPage(page, Index.stopwords)  # stem the page
         urlDict = dict()
         urlDict.update({page[0]: {}})
         urlDict[page[0]] = wordDict
-        positionDict = wordDict
-        # positionDict = makePositionDict(wordDict)
-
         if urlDict.values().__len__() == 0:
             return 0
-        Index.updatePosition(page[0], positionDict)
+        Index.updatePosition(page[0], wordDict)
         Index.updateIndex(urlDict)  # update the invertedIndex
         Index.updateCounter()
         Index.updateFrequency()

@@ -6,11 +6,9 @@ from stemmer import stemQuery
 from timeit import default_timer as timer
 import multiprocessing
 
-
 """ This function create threads-workers that will be used later"""
 
 NUMBER_OF_THREADS = multiprocessing.cpu_count() - 3
-
 
 
 def create_workers():
@@ -63,7 +61,7 @@ def processQuery(topKResults, query):
     create_workers()
     queue.join()
     end = timer()
-    query_time = end -start
+    query_time = end - start
     return Query.returnTopKResults(TOP_K_RESULTS), query_time
 
 
@@ -81,9 +79,5 @@ def feedBackQuery(query, topKResults):
     create_workers()
     queue.join()
     end = timer()
-    querytime = end-start
+    querytime = end - start
     return Query.returnTopKResults(TOP_K_RESULTS), querytime
-
-
-
-

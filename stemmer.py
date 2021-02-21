@@ -45,7 +45,6 @@ def stemPage(page, stopWords):
 
 def makeUrlDict(url, stemSentence):
     word_dict = dict()
-    listOfwords = []
     """Here we create the word dictionary with values number of appearances """
     for stemmedToken in stemSentence:
         if stemmedToken not in word_dict.keys():
@@ -69,18 +68,6 @@ def makeUrlDict(url, stemSentence):
     return v
 
 
-def makePositionDict(wordDict):
-    print(wordDict)
-    arrayOfwords = np.array(list(wordDict.keys()))
-    partialDict = dict()
-    for i in range(len(arrayOfwords)):
-        # atuple = (i, wordDict.get(arrayOfwords[i]))
-        partialDict.update({arrayOfwords[i]: wordDict.get(arrayOfwords[i])})
-    # for word in arrayOfwords:
-    #     partialDict.update()
-    return partialDict
-
-
 def return_freq():
     return freq_dict
 
@@ -97,7 +84,6 @@ def isDecimal(s):
         return False
 
 
-# Need to send stop words as arguement
 def stemQuery(query):
     porter = PorterStemmer()
     sentence = ' '.join(query)

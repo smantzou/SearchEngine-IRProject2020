@@ -32,7 +32,7 @@ class Query:
         else:
             Query.relDoc = Query.findRelevantDocuments(query)
             Query.unInvertedIndex = Query.unInvertIndex()
-            Query.query_TF_IDF_Dict = query  # the query is allready in tf terms
+            Query.query_TF_IDF_Dict = query  # the query is already in tf terms
 
     @staticmethod
     def boot(query):
