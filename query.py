@@ -105,7 +105,7 @@ class Query:
     def convert(tupleItem):
         di = dict(tupleItem)
         return di
-
+    """Method that calculates the term frequency and updates the Cosine Dictionary"""
     @staticmethod
     def calculate_tf(url, flag):
 
@@ -127,16 +127,12 @@ class Query:
             Query.updateCosineDict(url, cosSim)
         return tfDict
 
-    """Here we calculate the Terms frequency of common words in a document and query """
-
-    """Method that returns the relevant documents with the query"""
-
     @staticmethod
     def returnRelevantDocuments():
         return Query.relDoc
 
-    """Here it calculated the cosine similarity of two vectors, one vector represent the query and the other the 
-    document """
+    """Here it calculated the cosine similarity of two dictionaries, one dictionary represents the query and the other 
+     the document """
 
     @staticmethod
     def calculateCosSim(queryDict, documentDict):
@@ -150,7 +146,7 @@ class Query:
         arrayTF = np.array(list(documentDict.values()))
         result = dot / (1 * norm(arrayTF))
         return result
-
+    """This method calculates the new query after the feedback data has been send and return the new Query"""
     @staticmethod
     def feedback(pageFeedback):
         aParameter = 1
@@ -161,6 +157,7 @@ class Query:
         notLiked = dict()
         negativeDictionary = dict()
         theNewQuery = dict()
+        # the old query!
         query = Query.query_TF_IDF_Dict
         for word in query:
             query.update({word: query.get(word) * aParameter})
@@ -189,7 +186,7 @@ class Query:
                 if result > 0:
                     theNewQuery.update({word: result})
         return theNewQuery
-
+    """Method that operates on 2 given dictionaries and return the sum of them"""
     @staticmethod
     def dict_operator(oldDict, newDict, size, parameter):
         for doc in oldDict.keys():
@@ -230,6 +227,3 @@ class Query:
                 break
         return topKDict
 
-    @staticmethod
-    def printCosSimDict():
-        print(Query.documentCosSim)

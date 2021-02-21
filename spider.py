@@ -8,7 +8,7 @@ from general import *
 
 class Spider:
     # Class variable (shared among all instances)
-
+    # Class variables acessible by every instance of Spider
     project_name = ''
     base_url = ''
     domain_name = ''
@@ -24,6 +24,8 @@ class Spider:
     countOfNotCrawledPgages = 0
     crawledPages = 0
     bannedResponses = ['application', 'image', 'xml']
+
+    # Class constructor
 
     def __init__(self, project_name, base_url, domain_name):
         Spider.project_name = project_name
@@ -42,6 +44,7 @@ class Spider:
             Spider.dictCount = list(Spider.textDict.keys())[-1] + 1
         self.crawl_page('First Spider', Spider.base_url)
 
+    # Class method that boots the file and directory
     @staticmethod
     def boot():
         create_project_dir(Spider.project_name)
@@ -49,6 +52,7 @@ class Spider:
         Spider.queue = file_to_set(Spider.queue_file)
         Spider.crawled = file_to_set(Spider.crawled_file)
 
+    # Class method that crawls a page then adds it to the crawled set and text file
     @staticmethod
     def crawl_page(thread_name, page_url):
         if page_url not in Spider.crawled:
@@ -65,6 +69,8 @@ class Spider:
     def returnCrawled():
         return Spider.crawledPages
 
+    # Class method that "opens" the given page url then handles the responses for only text/html ones , extracts the
+    # html tags and update the title and text dictionaries and returns the found links to feed the crawl queue
     @staticmethod
     def gather_links(page_url):
         try:

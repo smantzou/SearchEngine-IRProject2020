@@ -58,20 +58,6 @@ def create_jobs():
     fifo_queue.join()
     crawl()
 
-#
-# def create_jobs_best():
-#     i = 0
-#     queue_links = file_to_set(QUEUE_FILE)
-#     while i < MAX_NUMBER_OF_CRAWLS and len(queue_links) > 0:
-#         print(i,"i am hereeeeeeee")
-#         queue_links = file_to_set(QUEUE_FILE)
-#         print(str(len(queue_links)) + 'links in the queue')
-#         for link in file_to_set(QUEUE_FILE):
-#             fifo_queue.put(link)
-#             i += 1
-#         fifo_queue.join()
-
-
 
 def crawl():
     """If queue_links file has pages then update then fifo_queue"""
@@ -102,5 +88,4 @@ if __name__ == '__main__':
     fifo_queue = Queue()
     Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
     create_workers()
-    # crawl()
-    create_jobs_best()
+    crawl()

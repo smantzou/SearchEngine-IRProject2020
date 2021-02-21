@@ -44,6 +44,9 @@ def numberOfThreads():
     return multiprocessing.cpu_count()
 
 
+"""Method that receives the query and topK from front end and  return the topK results"""
+
+
 def processQuery(topKResults, query):
     TOP_K_RESULTS = topKResults
     QUERY = query
@@ -63,6 +66,9 @@ def processQuery(topKResults, query):
     end = timer()
     query_time = end - start
     return Query.returnTopKResults(TOP_K_RESULTS), query_time
+
+
+"""Method that makes the new query and return the new topK results"""
 
 
 def feedBackQuery(query, topKResults):

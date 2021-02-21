@@ -2,9 +2,11 @@ import eel
 from QueryProcessor import processQuery, feedBackQuery
 from general import file_to_dict
 
+# Initialise the static folder
 eel.init("static")
 
 
+# Method that transfer the query info to QueryProcessor then returns it to Front End
 @eel.expose
 def getQueryInfo(topKResults, query):
     topKDict, query_time = processQuery(topKResults, query.split(" "))
@@ -12,6 +14,7 @@ def getQueryInfo(topKResults, query):
     eel.receiveResults(topKDict, titleDict, query_time)
 
 
+# Method that transfers the feed back info to QueryProcessor then returns it to Front End
 @eel.expose
 def receiveFeedback(feedBackDict):
     urlFeedBack = dict()
@@ -22,6 +25,7 @@ def receiveFeedback(feedBackDict):
     eel.receiveResults(newTopK, newTitle, query_time)
 
 
+# Method that returns the title of given Urls
 def returnTitles(urlDict):
     titleDict = file_to_dict('Crawler/titles.pkl')
     partialTitleDict = dict()
